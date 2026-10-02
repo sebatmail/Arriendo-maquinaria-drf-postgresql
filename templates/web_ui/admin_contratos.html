@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Ejecutivo Gestión de Contratos | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <i class="fa-solid fa-list-check"></i> Supervisión & Logística
+            </div>
+            <h1 class="text-3xl font-black text-white tracking-tight">Gestión y Transición de Contratos</h1>
+            <p class="text-sm text-slate-400">Control de entregas a faena, devoluciones con reposición automática de flota y cancelaciones.</p>
+        </div>
+    </div>
+
+    <!-- Table of Contracts -->
+    <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-950/80 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="p-4">Contrato</th>
+                        <th class="p-4">Empresa Constructora</th>
+                        <th class="p-4">Equipos Contratados</th>
+                        <th class="p-4 text-right">Total Liquidado</th>
+                        <th class="p-4 text-center">Estado Actual</th>
+                        <th class="p-4 text-right">Acciones de Estado</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                    {% for c in contratos %}
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4">
+                                <p class="font-bold text-white font-mono">{{ c.numero_contrato }}</p>
+                                <p class="text-[11px] text-slate-400">{{ c.creado_en|date:"d M Y, H:i" }}</p>
+                            </td>
+                            <td class="p-4">
+                                <p class="font-bold text-slate-200">{{ c.cliente.razon_social|default:c.cliente.get_full_name|default:c.cliente.username }}</p>
+                                <p class="text-xs text-slate-400 font-mono">RUT: {{ c.cliente.rut_empresa|default:"N/A" }}</p>
+                            </td>
+                            <td class="p-4">
+                                <ul class="text-xs space-y-1">
+                                    {% for d in c.detalles.all %}
+                                        <li>
+                                            <strong class="text-amber-400">{{ d.cantidad }}x</strong> {{ d.nombre_equipo_congelado }}
+                                            <span class="text-slate-500 font-mono">({{ d.dias_totales }} días)</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="p-4 text-right font-mono font-bold text-white">
+                                ${{ c.total_general|floatformat:0 }} CLP
+                            </td>
+                            <td class="p-4 text-center">
+                                {% if c.estado == 'PAGADO' %}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                        PAGADO
+                                    </span>
+                                {% elif c.estado == 'ENTREGADO' %}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                                        ENTREGADO EN FAENA
+                                    </span>
+                                {% elif c.estado == 'COMPLETADO' %}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                                        COMPLETADO (Devuelto)
+                                    </span>
+                                {% elif c.estado == 'CANCELADO' %}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                                        CANCELADO
+                                    </span>
+                                {% else %}
+                                    <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                        {{ c.get_estado_display }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-right space-x-1.5">
+                                {% if c.estado != 'COMPLETADO' and c.estado != 'CANCELADO' %}
+                                    <button type="button" onclick="abrirModalTransicion('{{ c.id }}', '{{ c.numero_contrato }}', '{{ c.estado }}')" class="px-3 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 font-bold text-xs transition">
+                                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Transicionar Estado
+                                    </button>
+                                {% else %}
+                                    <span class="text-xs text-slate-500 italic">Registro Finalizado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="p-8 text-center text-slate-400">
+                                No existen contratos de arriendo registrados en el sistema.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL DE TRANSICIÓN DE ESTADO -->
+<div id="modalTransicion" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl border border-slate-700 max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+        <button type="button" onclick="cerrarModalTransicion()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="space-y-1">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Control Logístico</span>
+            <h3 id="modalTransicionTitulo" class="text-xl font-black text-white">Transición de Contrato</h3>
+        </div>
+
+        <form id="formTransicion" onsubmit="ejecutarTransicion(event)" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" id="transicionContratoId">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nuevo Estado <span class="text-amber-400">*</span></label>
+                <select id="transicionNuevoEstado" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                    <option value="ENTREGADO">ENTREGADO (Despachado a faena o retirado por cliente)</option>
+                    <option value="COMPLETADO">COMPLETADO (Devuelto a bodega -> Repone flota disponible)</option>
+                    <option value="CANCELADO">CANCELADO (Anular arriendo -> Repone flota disponible)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Notas / Observaciones de Auditoría</label>
+                <textarea id="transicionComentarios" rows="3" placeholder="Ej: Maquinaria devuelta con horómetro conforme e inspección aprobada..."
+                          class="w-full py-2 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-3">
+                <button type="button" onclick="cerrarModalTransicion()" class="w-1/3 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                    Cancelar
+                </button>
+                <button type="submit" class="w-2/3 py-3 px-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-sky-500/20 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Aplicar Cambio
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function abrirModalTransicion(id, numero, estadoActual) {
+        document.getElementById('transicionContratoId').value = id;
+        document.getElementById('modalTransicionTitulo').innerText = `Contrato: ${numero}`;
+        document.getElementById('transicionComentarios').value = '';
+        document.getElementById('modalTransicion').classList.remove('hidden');
+    }
+
+    function cerrarModalTransicion() {
+        document.getElementById('modalTransicion').classList.add('hidden');
+    }
+
+    async function ejecutarTransicion(event) {
+        event.preventDefault();
+        const contratoId = document.getElementById('transicionContratoId').value;
+        const nuevoEstado = document.getElementById('transicionNuevoEstado').value;
+        const comentarios = document.getElementById('transicionComentarios').value;
+
+        try {
+            const response = await fetch(`/api/contratos/${contratoId}/estado/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    nuevo_estado: nuevoEstado,
+                    comentarios: comentarios
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Estado Actualizado!',
+                    text: data.mensaje,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => window.location.reload());
+            } else {
+                Swal.fire('Error al transicionar', data.error || JSON.stringify(data), 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error de red', 'No se pudo comunicar con el servidor.', 'error');
+        }
+    }
+</script>
+{% endblock %}

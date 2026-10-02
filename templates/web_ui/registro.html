@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro Empresa Constructora | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto my-8">
+    <div class="glass-panel rounded-3xl p-8 border border-slate-800 shadow-2xl space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 mx-auto flex items-center justify-center text-amber-400 text-2xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white">Registro de Empresa Constructora</h2>
+            <p class="text-xs text-slate-400">Cree su cuenta corporativa para gestionar arriendos de maquinaria pesada</p>
+        </div>
+
+        <form method="POST" action="{% url 'registro' %}" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nombre de Usuario <span class="text-amber-400">*</span></label>
+                    <input type="text" name="username" required placeholder="constructora_ejemplo"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email Corporativo <span class="text-amber-400">*</span></label>
+                    <input type="email" name="email" required placeholder="contacto@constructora.cl"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Razón Social / Fantasía <span class="text-amber-400">*</span></label>
+                    <input type="text" name="razon_social" required placeholder="Constructora Los Andes SpA"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">RUT Empresa <span class="text-amber-400">*</span></label>
+                    <input type="text" name="rut_empresa" required placeholder="76.123.456-7"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Teléfono Faena</label>
+                    <input type="text" name="telefono" placeholder="+56 9 9876 5432"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Dirección de Obra Principal</label>
+                    <input type="text" name="direccion_obra" placeholder="Av. Kennedy #5000, Las Condes"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Contraseña <span class="text-amber-400">*</span></label>
+                    <input type="password" name="password" required placeholder="••••••••" minlength="6"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Confirmar Contraseña <span class="text-amber-400">*</span></label>
+                    <input type="password" name="password_confirm" required placeholder="••••••••" minlength="6"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-building-circle-check"></i> Registrar Empresa Constructora
+            </button>
+        </form>
+
+        <div class="text-center pt-2 border-t border-slate-800">
+            <p class="text-xs text-slate-400">¿Ya tiene cuenta? 
+                <a href="{% url 'login' %}" class="text-amber-400 font-bold hover:underline">Iniciar Sesión</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

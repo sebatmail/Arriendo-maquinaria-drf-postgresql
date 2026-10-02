@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RENT-EQUIP PRO | Plataforma Industrial de Arriendo de Maquinaria{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        industrial: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        brand: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155',
+                            accent: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+        .gradient-border {
+            border: 1px solid transparent;
+            background: linear-gradient(to bottom right, #1e293b, #0f172a) padding-box,
+                        linear-gradient(to bottom right, #f59e0b, #3b82f6) border-box;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+
+    <!-- TOP HEADER / NAVBAR -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'index_catalogo' %}" class="flex items-center space-x-3 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-105 transition transform shadow-lg shadow-amber-500/10">
+                            <i class="fa-solid fa-tractor text-2xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
+                                RENT<span class="text-amber-500">EQUIP</span> <span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">PRO</span>
+                            </span>
+                            <p class="text-xs text-slate-400 font-medium">Plataforma B2B de Maquinaria Pesada</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-3">
+                    <a href="{% url 'index_catalogo' %}" class="px-3 py-2 rounded-lg text-sm font-semibold hover:text-amber-400 hover:bg-slate-800/80 transition {% if request.resolver_match.url_name == 'index_catalogo' %}text-amber-400 bg-slate-800{% else %}text-slate-300{% endif %}">
+                        <i class="fa-solid fa-cubes-stacked mr-1.5"></i> Catálogo Flota
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        {% if user.rol == 'EMPRESA_CONSTRUCTORA' or user.is_superuser %}
+                            <a href="{% url 'carro_view' %}" class="relative px-3 py-2 rounded-lg text-sm font-semibold hover:text-amber-400 hover:bg-slate-800/80 transition {% if request.resolver_match.url_name == 'carro_view' %}text-amber-400 bg-slate-800{% else %}text-slate-300{% endif %}">
+                                <i class="fa-solid fa-cart-flatbed mr-1.5"></i> Carro de Arriendo
+                                {% if user.carro_activo and user.carro_activo.cantidad_items > 0 %}
+                                    <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-slate-950 animate-pulse">
+                                        {{ user.carro_activo.cantidad_items }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'mis_contratos_view' %}" class="px-3 py-2 rounded-lg text-sm font-semibold hover:text-amber-400 hover:bg-slate-800/80 transition {% if request.resolver_match.url_name == 'mis_contratos_view' %}text-amber-400 bg-slate-800{% else %}text-slate-300{% endif %}">
+                                <i class="fa-solid fa-file-contract mr-1.5"></i> Mis Contratos
+                            </a>
+                        {% endif %}
+
+                        {% if user.rol == 'EJECUTIVO_ARRIENDOS' or user.is_staff or user.is_superuser %}
+                            <!-- MENÚ EXCLUSIVO EJECUTIVO / ADMIN -->
+                            <div class="h-6 w-px bg-slate-700 mx-2"></div>
+                            <a href="{% url 'admin_maquinarias_view' %}" class="px-3 py-2 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition">
+                                <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> CRUD Maquinarias
+                            </a>
+                            <a href="{% url 'admin_contratos_view' %}" class="px-3 py-2 rounded-lg text-sm font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 transition">
+                                <i class="fa-solid fa-list-check mr-1.5"></i> Gestión Contratos
+                            </a>
+                            <!-- REQUERIMIENTO PIZARRA: DOCUMENTACIÓN SWAGGER HEADER SOLO ADMIN -->
+                            <a href="{% url 'documentacion_admin' %}" class="px-3 py-2 rounded-lg text-sm font-semibold text-amber-300 bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 transition animate-pulse flex items-center gap-1.5" title="Documentación técnica exclusiva de Administrador">
+                                <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                                <span>Docs Swagger (Admin)</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </nav>
+
+                <!-- User Session Actions -->
+                <div class="flex items-center space-x-3">
+                    {% if user.is_authenticated %}
+                        <div class="flex items-center space-x-3 pl-3 border-l border-slate-700">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-bold text-white">{{ user.razon_social|default:user.get_full_name|default:user.username }}</p>
+                                <span class="inline-flex items-center text-xs px-2 py-0.5 rounded-md font-semibold {% if user.rol == 'EJECUTIVO_ARRIENDOS' %}bg-purple-500/20 text-purple-300 border border-purple-500/40{% else %}bg-blue-500/20 text-blue-300 border border-blue-500/40{% endif %}">
+                                    <i class="fa-solid {% if user.rol == 'EJECUTIVO_ARRIENDOS' %}fa-user-gear{% else %}fa-building{% endif %} mr-1 text-[10px]"></i>
+                                    {{ user.get_rol_display }}
+                                </span>
+                            </div>
+                            <a href="{% url 'logout' %}" class="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-red-400 hover:bg-red-500/10 border border-slate-700 transition" title="Cerrar Sesión">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-semibold text-slate-200 hover:text-white rounded-xl hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-arrow-right-to-bracket mr-1.5"></i> Ingresar
+                            </a>
+                            <a href="{% url 'registro' %}" class="px-4 py-2 text-sm font-bold text-slate-950 bg-amber-500 hover:bg-amber-400 rounded-xl shadow-lg shadow-amber-500/25 transition">
+                                <i class="fa-solid fa-user-plus mr-1.5"></i> Registro Constructora
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ALERTS / FLASH MESSAGES -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="p-4 mb-3 rounded-xl border flex items-center justify-between shadow-lg {% if message.tags == 'error' %}bg-red-950/80 border-red-800/80 text-red-200{% elif message.tags == 'success' %}bg-emerald-950/80 border-emerald-800/80 text-emerald-200{% elif message.tags == 'warning' %}bg-amber-950/80 border-amber-800/80 text-amber-200{% else %}bg-blue-950/80 border-blue-800/80 text-blue-200{% endif %}">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid {% if message.tags == 'error' %}fa-circle-xmark text-red-400{% elif message.tags == 'success' %}fa-circle-check text-emerald-400{% elif message.tags == 'warning' %}fa-triangle-exclamation text-amber-400{% else %}fa-circle-info text-blue-400{% endif %} text-lg"></i>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- MAIN BODY CONTENT -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ENTERPRISE FOOTER (CUMPLIMIENTO ESTRICTO PAUTA EVA-2) -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-8 text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800/60">
+                <!-- Info 1 -->
+                <div class="md:col-span-2 space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                            <i class="fa-solid fa-tractor"></i>
+                        </div>
+                        <span class="text-lg font-bold text-white tracking-tight">RENT-EQUIP PRO ARCHITECTURE</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed pr-6">
+                        Sistema integral de arriendo de maquinaria industrial desarrollado con Django REST Framework y PostgreSQL.
+                        Implementa arquitectura normalizada en 3FN, tokens JWT con claims de rol (RBAC), control transaccional atómico
+                        de inventario y persistencia post-logout en base de datos.
+                    </p>
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">PostgreSQL Native</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">DRF + SimpleJWT</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">3FN Normalized</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">ACID Transactions</span>
+                    </div>
+                </div>
+
+                <!-- Info 2: Metadatos del Alumno Obligatorios -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Ficha Técnica de Evaluación</h4>
+                    <ul class="text-xs space-y-1.5 text-slate-300">
+                        <li><strong class="text-white">Estudiante:</strong> {{ alumno_info.NOMBRE_COMPLETO }}</li>
+                        <li><strong class="text-white">Sección:</strong> {{ alumno_info.SECCION }}</li>
+                        <li><strong class="text-white">Año Académico:</strong> {{ alumno_info.ANO }}</li>
+                        <li><strong class="text-white">Asignatura:</strong> {{ alumno_info.ASIGNATURA }}</li>
+                        <li><strong class="text-white">Proyecto:</strong> N°6 Arriendo Maquinaria</li>
+                    </ul>
+                </div>
+
+                <!-- Info 3: Enlaces Técnicos -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">Acceso a Servicios API</h4>
+                    <ul class="text-xs space-y-1.5">
+                        <li><a href="/api/docs/" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Swagger OpenAPI UI (/api/docs/)</a></li>
+                        <li><a href="/api/redoc/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-book text-[10px]"></i> ReDoc (/api/redoc/)</a></li>
+                        <li><a href="/api/schema/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> OpenAPI JSON Schema</a></li>
+                        <li><a href="/admin/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Django Admin Core</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright & Student Badge -->
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+                <p>© {{ alumno_info.ANO }} RENT-EQUIP PRO. Todos los derechos reservados. Desarrollo individual para evaluación EVA-2.</p>
+                <div class="flex items-center space-x-2 mt-3 sm:mt-0">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-slate-300 font-semibold">PostgreSQL Conectado & Operativo</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

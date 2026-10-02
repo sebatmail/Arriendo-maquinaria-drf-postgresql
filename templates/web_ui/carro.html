@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Carro de Arriendo Persistente | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-5xl mx-auto">
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-database"></i> Persistencia 1 a 1 en PostgreSQL (Post-Logout)
+            </span>
+            <h1 class="text-3xl font-black text-white tracking-tight">Carro de Arriendo de Maquinaria</h1>
+            <p class="text-sm text-slate-400">Sus equipos y períodos seleccionados permanecen intactos entre sesiones y dispositivos.</p>
+        </div>
+        
+        {% if items %}
+            <div>
+                <button type="button" onclick="vaciarCarro()" class="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold text-xs rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Vaciar Carro Completo
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if items %}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            <!-- Items List (2 cols) -->
+            <div class="lg:col-span-2 space-y-4">
+                {% for item in items %}
+                    <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ item.maquinaria.imagen_url }}" alt="{{ item.maquinaria.nombre }}" class="w-20 h-20 rounded-xl object-cover border border-slate-700">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700">{{ item.maquinaria.codigo_sku }}</span>
+                                <h3 class="text-base font-bold text-white">{{ item.maquinaria.nombre }}</h3>
+                                <p class="text-xs text-slate-400">
+                                    <i class="fa-regular fa-calendar-days text-amber-400 mr-1"></i> Período: <strong class="text-slate-200">{{ item.fecha_inicio|date:"d M Y" }}</strong> al <strong class="text-slate-200">{{ item.fecha_fin|date:"d M Y" }}</strong> 
+                                    <span class="text-amber-400 font-bold">({{ item.dias_arriendo }} días)</span>
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    Cantidad: <strong class="text-white">{{ item.cantidad }} unidad(es)</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Subtotal & Delete -->
+                        <div class="text-right flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                            <div>
+                                <p class="text-xs text-slate-400">Subtotal Ítem:</p>
+                                <p class="text-lg font-extrabold text-white font-mono">${{ item.subtotal_total|floatformat:0 }} <span class="text-[10px] text-slate-400 font-normal">CLP</span></p>
+                                <p class="text-[10px] text-amber-400 font-mono">Arriendo: ${{ item.subtotal_arriendo|floatformat:0 }} | Garantía: ${{ item.subtotal_garantia|floatformat:0 }}</p>
+                            </div>
+                            <button type="button" onclick="eliminarItem('{{ item.id }}')" class="mt-2 text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-trash-can"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Summary & Checkout (1 col) -->
+            <div class="glass-panel rounded-3xl p-6 border border-slate-700/80 shadow-2xl space-y-6 lg:sticky lg:top-28">
+                <div class="space-y-1 pb-4 border-b border-slate-800">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-amber-400"></i> Resumen de Contrato
+                    </h3>
+                    <p class="text-xs text-slate-400">Liquidación preliminar antes de checkout</p>
+                </div>
+
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between text-slate-300">
+                        <span>Total Arriendo (Tarifa x Días):</span>
+                        <span class="font-bold text-white font-mono">${{ carro.total_arriendo|floatformat:0 }} CLP</span>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span class="flex items-center gap-1">
+                            Garantías Fijas Retenidas:
+                            <i class="fa-solid fa-circle-info text-slate-500 text-xs" title="Se restituyen al completar la devolución"></i>
+                        </span>
+                        <span class="font-bold text-amber-400 font-mono">${{ carro.total_garantias|floatformat:0 }} CLP</span>
+                    </div>
+                    <div class="border-t border-slate-800 pt-3 flex justify-between items-end">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Monto Total Liquidable</span>
+                            <span class="text-2xl font-black text-white font-mono">${{ carro.total_general|floatformat:0 }}</span>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-md">
+                            IVA Incluido
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Formulario de Checkout -->
+                <form id="formCheckout" onsubmit="ejecutarCheckout(event)" class="space-y-4 pt-2">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Dirección de Faena / Despacho</label>
+                        <input type="text" id="checkoutDireccion" name="direccion_faena" value="{{ user.direccion_obra|default:'' }}" placeholder="Ej: Obra Costanera Sur #450, Santiago" required
+                               class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Observaciones / Contacto Faena</label>
+                        <textarea id="checkoutObservaciones" name="observaciones" rows="2" placeholder="Ej: Contactar a Jefe de Terreno antes de entrega..."
+                                  class="w-full py-2 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnConfirmarContrato" class="w-full py-4 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl shadow-amber-500/25 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-signature text-base"></i> Confirmar Contrato y Pagar
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center leading-tight">
+                        <i class="fa-solid fa-shield-check text-emerald-400"></i> Al confirmar, se valida el stock atómicamente y se descuenta de la flota disponible.
+                    </p>
+                </form>
+            </div>
+
+        </div>
+    {% else %}
+        <!-- Empty Cart -->
+        <div class="glass-panel rounded-3xl p-16 text-center border border-slate-800 space-y-6 shadow-2xl">
+            <div class="w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-amber-400 text-3xl">
+                <i class="fa-solid fa-cart-flatbed-empty"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-black text-white">Su Carro de Arriendo está vacío</h2>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">Explore nuestro catálogo de maquinarias pesadas y configure las fechas para iniciar una solicitud de arriendo.</p>
+            </div>
+            <a href="{% url 'index_catalogo' %}" class="inline-flex items-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
+                <i class="fa-solid fa-cubes-stacked"></i> Explorar Catálogo de Maquinarias
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function eliminarItem(itemId) {
+        const confirmacion = await Swal.fire({
+            title: '¿Eliminar equipo del carro?',
+            text: 'Esta acción removerá el ítem de su carro persistente en PostgreSQL.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#475569',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        try {
+            const response = await fetch(`/api/carro-arriendo/items/${itemId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'El equipo fue removido de su carro.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => window.location.reload());
+            } else {
+                Swal.fire('Error', 'No se pudo eliminar el ítem.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error de red', 'No fue posible comunicar con el servidor.', 'error');
+        }
+    }
+
+    async function vaciarCarro() {
+        const confirmacion = await Swal.fire({
+            title: '¿Vaciar carro completo?',
+            text: 'Se eliminarán todos los equipos seleccionados.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#475569',
+            confirmButtonText: 'Sí, vaciar todo',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        try {
+            const response = await fetch('/api/carro-arriendo/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                Swal.fire('Error', 'No se pudo vaciar el carro.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error de red', 'No fue posible comunicar con el servidor.', 'error');
+        }
+    }
+
+    async function ejecutarCheckout(event) {
+        event.preventDefault();
+        const direccion = document.getElementById('checkoutDireccion').value;
+        const observaciones = document.getElementById('checkoutObservaciones').value;
+
+        const confirmacion = await Swal.fire({
+            title: '¿Confirmar Contrato de Arriendo?',
+            html: '<p class="text-xs text-slate-300">Se validará el stock en PostgreSQL de forma atómica y se generará el contrato inmutable con estado <strong>PAGADO</strong>.</p>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#f59e0b',
+            cancelButtonColor: '#475569',
+            confirmButtonText: 'Sí, Confirmar y Pagar',
+            cancelButtonText: 'Revisar detalles'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        try {
+            Swal.showLoading();
+            const response = await fetch('/api/contratos/checkout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    direccion_faena: direccion,
+                    observaciones: observaciones
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Contrato Generado con Éxito!',
+                    html: `<p class="text-sm">Número de Contrato: <strong>${data.contrato.numero_contrato}</strong></p><p class="text-xs text-emerald-400 mt-2">Estado: PAGADO (Flota descontada del inventario)</p>`,
+                    icon: 'success',
+                    confirmButtonColor: '#f59e0b',
+                    confirmButtonText: 'Ver Mis Contratos'
+                }).then(() => {
+                    window.location.href = '{% url "mis_contratos_view" %}';
+                });
+            } else {
+                Swal.fire({
+                    title: 'Transacción Rechazada',
+                    text: data.error || JSON.stringify(data),
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        } catch (e) {
+            Swal.fire('Error de Red', 'Ocurrió un error al procesar la orden transaccional.', 'error');
+        }
+    }
+</script>
+{% endblock %}

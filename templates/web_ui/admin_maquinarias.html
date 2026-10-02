@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Ejecutivo CRUD Maquinarias | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <i class="fa-solid fa-user-gear"></i> Módulo Ejecutivo de Arriendos
+            </div>
+            <h1 class="text-3xl font-black text-white tracking-tight">Gestión de Flota e Inventario Industrial</h1>
+            <p class="text-sm text-slate-400">CRUD administrativo completo con control de stock, tarifas diarias y garantías fijas.</p>
+        </div>
+        <button type="button" onclick="abrirModalCrear()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
+            <i class="fa-solid fa-plus text-base"></i> Ingresar Nueva Maquinaria
+        </button>
+    </div>
+
+    <!-- Table of Machineries -->
+    <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-950/80 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="p-4">Equipo / SKU</th>
+                        <th class="p-4">Categoría</th>
+                        <th class="p-4 text-right">Tarifa Diaria</th>
+                        <th class="p-4 text-right">Garantía Fija</th>
+                        <th class="p-4 text-center">Flota (Disp / Total)</th>
+                        <th class="p-4 text-center">Estado Operativo</th>
+                        <th class="p-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                    {% for maq in maquinarias %}
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4">
+                                <div class="flex items-center space-x-3">
+                                    <img src="{{ maq.imagen_url }}" alt="{{ maq.nombre }}" class="w-12 h-12 rounded-xl object-cover border border-slate-700">
+                                    <div>
+                                        <p class="font-bold text-white">{{ maq.nombre }}</p>
+                                        <p class="text-xs text-slate-400 font-mono">{{ maq.codigo_sku }} • {{ maq.marca }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700">
+                                    {{ maq.categoria.nombre }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-right font-mono font-bold text-white">
+                                ${{ maq.tarifa_diaria|floatformat:0 }} <span class="text-[10px] text-slate-400">/día</span>
+                            </td>
+                            <td class="p-4 text-right font-mono text-amber-400 font-bold">
+                                ${{ maq.monto_garantia|floatformat:0 }}
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold font-mono {% if maq.flota_disponible > 0 %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/30{% else %}bg-rose-500/10 text-rose-400 border border-rose-500/30{% endif %}">
+                                    {{ maq.flota_disponible }} / {{ maq.flota_total }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md {% if maq.estado_operativo == 'DISPONIBLE' %}bg-emerald-950 text-emerald-300 border border-emerald-800{% elif maq.estado_operativo == 'MANTENCION' %}bg-amber-950 text-amber-300 border border-amber-800{% else %}bg-rose-950 text-rose-300 border border-rose-800{% endif %}">
+                                    {{ maq.get_estado_operativo_display }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-right space-x-2">
+                                <button type="button" 
+                                        onclick="abrirModalEditar('{{ maq.id }}', '{{ maq.nombre|escapejs }}', '{{ maq.codigo_sku|escapejs }}', '{{ maq.categoria.id }}', '{{ maq.marca|escapejs }}', '{{ maq.modelo|escapejs }}', '{{ maq.tarifa_diaria }}', '{{ maq.monto_garantia }}', '{{ maq.flota_total }}', '{{ maq.flota_disponible }}', '{{ maq.estado_operativo }}', '{{ maq.imagen_url|escapejs }}', '{{ maq.descripcion|escapejs }}')"
+                                        class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition" title="Editar Equipo">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" onclick="eliminarMaquinaria('{{ maq.id }}', '{{ maq.nombre|escapejs }}')" class="p-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-rose-400 border border-slate-700 transition" title="Eliminar Equipo">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="p-8 text-center text-slate-400">
+                                No existen maquinarias catalogadas en la base de datos.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL CRUD CREAR / EDITAR MAQUINARIA -->
+<div id="modalCrudMaq" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl border border-slate-700 max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <button type="button" onclick="cerrarModalCrud()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="space-y-1">
+            <span id="modalCrudSubtitulo" class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Módulo Ejecutivo</span>
+            <h3 id="modalCrudTitulo" class="text-xl font-black text-white">Ingresar Nueva Maquinaria</h3>
+        </div>
+
+        <form id="formCrudMaquinaria" onsubmit="guardarMaquinaria(event)" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" id="crudMaquinariaId" value="">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nombre del Equipo <span class="text-amber-400">*</span></label>
+                    <input type="text" id="crudNombre" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Código SKU <span class="text-amber-400">*</span></label>
+                    <input type="text" id="crudSku" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Categoría <span class="text-amber-400">*</span></label>
+                    <select id="crudCategoria" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                        {% for cat in categorias %}
+                            <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Marca</label>
+                    <input type="text" id="crudMarca" value="Caterpillar" class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Modelo</label>
+                    <input type="text" id="crudModelo" value="Industrial Pro" class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tarifa Diaria CLP ($) <span class="text-amber-400">*</span></label>
+                    <input type="number" id="crudTarifa" step="1000" min="0" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Garantía Fija CLP ($) <span class="text-amber-400">*</span></label>
+                    <input type="number" id="crudGarantia" step="1000" min="0" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Flota Total</label>
+                    <input type="number" id="crudFlotaTotal" min="1" value="5" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Flota Disponible</label>
+                    <input type="number" id="crudFlotaDisponible" min="0" value="5" required class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Estado Operativo</label>
+                    <select id="crudEstadoOperativo" class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                        {% for val, label in estados_operativos %}
+                            <option value="{{ val }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">URL Imagen</label>
+                <input type="url" id="crudImagenUrl" value="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80" class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Descripción y Especificaciones Técnicas</label>
+                <textarea id="crudDescripcion" rows="3" required class="w-full py-2 px-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-3">
+                <button type="button" onclick="cerrarModalCrud()" class="w-1/3 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                    Cancelar
+                </button>
+                <button type="submit" id="btnGuardarCrud" class="w-2/3 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar Maquinaria
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function abrirModalCrear() {
+        document.getElementById('crudMaquinariaId').value = '';
+        document.getElementById('modalCrudTitulo').innerText = 'Ingresar Nueva Maquinaria';
+        document.getElementById('formCrudMaquinaria').reset();
+        document.getElementById('crudFlotaTotal').value = 5;
+        document.getElementById('crudFlotaDisponible').value = 5;
+        document.getElementById('modalCrudMaq').classList.remove('hidden');
+    }
+
+    function abrirModalEditar(id, nombre, sku, categoriaId, marca, modelo, tarifa, garantia, flotaTotal, flotaDisp, estado, img, desc) {
+        document.getElementById('crudMaquinariaId').value = id;
+        document.getElementById('modalCrudTitulo').innerText = `Editar: ${nombre}`;
+        document.getElementById('crudNombre').value = nombre;
+        document.getElementById('crudSku').value = sku;
+        document.getElementById('crudCategoria').value = categoriaId;
+        document.getElementById('crudMarca').value = marca;
+        document.getElementById('crudModelo').value = modelo;
+        document.getElementById('crudTarifa').value = tarifa;
+        document.getElementById('crudGarantia').value = garantia;
+        document.getElementById('crudFlotaTotal').value = flotaTotal;
+        document.getElementById('crudFlotaDisponible').value = flotaDisp;
+        document.getElementById('crudEstadoOperativo').value = estado;
+        document.getElementById('crudImagenUrl').value = img;
+        document.getElementById('crudDescripcion').value = desc;
+
+        document.getElementById('modalCrudMaq').classList.remove('hidden');
+    }
+
+    function cerrarModalCrud() {
+        document.getElementById('modalCrudMaq').classList.add('hidden');
+    }
+
+    async function guardarMaquinaria(event) {
+        event.preventDefault();
+        const id = document.getElementById('crudMaquinariaId').value;
+        const url = id ? `/api/maquinarias/${id}/` : '/api/maquinarias/';
+        const method = id ? 'PUT' : 'POST';
+
+        const payload = {
+            nombre: document.getElementById('crudNombre').value,
+            codigo_sku: document.getElementById('crudSku').value,
+            categoria_id: parseInt(document.getElementById('crudCategoria').value),
+            marca: document.getElementById('crudMarca').value,
+            modelo: document.getElementById('crudModelo').value,
+            tarifa_diaria: parseFloat(document.getElementById('crudTarifa').value),
+            monto_garantia: parseFloat(document.getElementById('crudGarantia').value),
+            flota_total: parseInt(document.getElementById('crudFlotaTotal').value),
+            flota_disponible: parseInt(document.getElementById('crudFlotaDisponible').value),
+            estado_operativo: document.getElementById('crudEstadoOperativo').value,
+            imagen_url: document.getElementById('crudImagenUrl').value,
+            descripcion: document.getElementById('crudDescripcion').value,
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Operación Exitosa!',
+                    text: id ? 'Maquinaria actualizada correctamente.' : 'Nueva maquinaria registrada en inventario.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => window.location.reload());
+            } else {
+                Swal.fire('Error', JSON.stringify(data), 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error de red', 'No fue posible guardar la maquinaria.', 'error');
+        }
+    }
+
+    async function eliminarMaquinaria(id, nombre) {
+        const confirmacion = await Swal.fire({
+            title: `¿Eliminar ${nombre}?`,
+            text: 'Esta acción eliminará el registro del catálogo.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#475569',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        try {
+            const response = await fetch(`/api/maquinarias/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                Swal.fire('Eliminado', 'Equipo removido exitosamente.', 'success').then(() => window.location.reload());
+            } else {
+                Swal.fire('Error', 'No se puede eliminar un equipo con contratos asociados.', 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error de red', 'No fue posible comunicar con el servidor.', 'error');
+        }
+    }
+</script>
+{% endblock %}

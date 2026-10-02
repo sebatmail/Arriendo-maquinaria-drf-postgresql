@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Contratos de Arriendo | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-6xl mx-auto">
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Registro Histórico Transaccional
+            </span>
+            <h1 class="text-3xl font-black text-white tracking-tight">Mis Contratos de Arriendo</h1>
+            <p class="text-sm text-slate-400">Contratos generados con tarifas congeladas, garantías en custodia y estado en faena.</p>
+        </div>
+        <a href="{% url 'index_catalogo' %}" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition inline-flex items-center gap-2">
+            <i class="fa-solid fa-cart-plus text-amber-400"></i> Nuevo Arriendo
+        </a>
+    </div>
+
+    {% if contratos %}
+        <div class="space-y-6">
+            {% for contrato in contratos %}
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-800 hover:border-slate-700 transition shadow-2xl space-y-6">
+                    
+                    <!-- Contract Top Banner -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-800 gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-black text-white font-mono tracking-tight">{{ contrato.numero_contrato }}</span>
+                                <!-- Status Badge -->
+                                {% if contrato.estado == 'PAGADO' %}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> PAGADO (Stock Descontado)
+                                    </span>
+                                {% elif contrato.estado == 'ENTREGADO' %}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-truck-ramp-box"></i> ENTREGADO EN FAENA
+                                    </span>
+                                {% elif contrato.estado == 'COMPLETADO' %}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-check"></i> COMPLETADO (Flota Devuelta)
+                                    </span>
+                                {% elif contrato.estado == 'CANCELADO' %}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-ban"></i> CANCELADO (Flota Repuesta)
+                                    </span>
+                                {% else %}
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                        {{ contrato.get_estado_display }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-xs text-slate-400">
+                                Emitido el {{ contrato.creado_en|date:"d M Y, H:i" }} | Faena: <strong class="text-slate-300">{{ contrato.direccion_faena|default:"No especificada" }}</strong>
+                            </p>
+                        </div>
+
+                        <!-- Total Box -->
+                        <div class="text-left sm:text-right">
+                            <span class="text-xs text-slate-400 block">Monto Total Contratado:</span>
+                            <span class="text-2xl font-black text-white font-mono">${{ contrato.total_general|floatformat:0 }} <span class="text-xs text-slate-400 font-normal">CLP</span></span>
+                            <p class="text-[11px] text-amber-400 font-mono">Arriendo: ${{ contrato.total_arriendo|floatformat:0 }} | Garantía: ${{ contrato.total_garantias|floatformat:0 }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Equipment Details Grid (3FN snapshot) -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-list text-amber-400"></i> Maquinarias y Tarifas Congeladas en Contrato
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {% for det in contrato.detalles.all %}
+                                <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">{{ det.codigo_sku_congelado }}</span>
+                                            <h5 class="text-sm font-bold text-white mt-1">{{ det.nombre_equipo_congelado }}</h5>
+                                        </div>
+                                        <span class="text-xs font-mono font-extrabold text-amber-400">${{ det.total_linea|floatformat:0 }} CLP</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 border-t border-slate-800/80 pt-2">
+                                        <div>
+                                            <span>Período:</span>
+                                            <strong class="text-slate-200 block">{{ det.fecha_inicio|date:"d M" }} al {{ det.fecha_fin|date:"d M Y" }}</strong>
+                                        </div>
+                                        <div>
+                                            <span>Días & Tarifa:</span>
+                                            <strong class="text-slate-200 block">{{ det.dias_totales }} días x ${{ det.tarifa_diaria_congelada|floatformat:0 }}/d</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Audit Timeline -->
+                    {% if contrato.historial_estados.all %}
+                        <div class="border-t border-slate-800 pt-4 space-y-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-timeline text-sky-400"></i> Historial de Auditoría y Transiciones
+                            </h4>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                {% for h in contrato.historial_estados.all %}
+                                    <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                                        <span class="font-bold text-amber-400">{{ h.estado_anterior }} &rarr; {{ h.estado_nuevo }}</span>
+                                        <span class="text-[10px] text-slate-500 ml-2 font-mono">({{ h.fecha_registro|date:"d/m H:i" }})</span>
+                                        {% if h.comentarios %}
+                                            <p class="text-[11px] text-slate-400 italic mt-0.5">{{ h.comentarios }}</p>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="glass-panel rounded-3xl p-16 text-center border border-slate-800 space-y-6 shadow-2xl">
+            <div class="w-20 h-20 rounded-2xl bg-slate-800 mx-auto flex items-center justify-center text-slate-400 text-3xl">
+                <i class="fa-solid fa-file-contract"></i>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-black text-white">No posee contratos registrados</h2>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">Aún no ha confirmado ningún arriendo de maquinaria pesada.</p>
+            </div>
+            <a href="{% url 'index_catalogo' %}" class="inline-flex items-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
+                <i class="fa-solid fa-cubes-stacked"></i> Ver Catálogo de Flota
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

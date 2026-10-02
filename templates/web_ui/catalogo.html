@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Maquinaria Pesada & Equipos | RENT-EQUIP PRO{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <!-- HERO BANNER -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 border border-slate-700/80 p-8 sm:p-12 shadow-2xl">
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-white text-9xl">
+            <i class="fa-solid fa-truck-monster"></i>
+        </div>
+        <div class="relative z-10 max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-sparkles"></i> Flota Certificada 2026 en 3FN
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                Arriendo de Maquinaria Pesada para <span class="text-amber-400">Grandes Faenas</span>
+            </h1>
+            <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
+                Excavadoras, generadores diésel, torres Layher y hormigoneras de alto tonelaje.
+                Tarifas por día congeladas por contrato y reserva transaccional con persistencia en PostgreSQL.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-slate-200">
+                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
+                    <p class="text-2xl font-bold text-amber-400">{{ maquinarias|length }}</p>
+                    <p class="text-xs text-slate-400">Equipos en Catálogo</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
+                    <p class="text-2xl font-bold text-emerald-400">{{ categorias|length }}</p>
+                    <p class="text-xs text-slate-400">Categorías Industriales</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
+                    <p class="text-2xl font-bold text-sky-400">100%</p>
+                    <p class="text-xs text-slate-400">Concurrencia Atómica</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
+                    <p class="text-2xl font-bold text-purple-400">24/7</p>
+                    <p class="text-xs text-slate-400">Persistencia DB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTROS DECLARATIVOS (DJANGO-FILTER) -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-filter text-amber-400"></i> Filtros de Búsqueda Avanzada (django-filter)
+            </h3>
+            <a href="{% url 'index_catalogo' %}" class="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Limpiar Filtros
+            </a>
+        </div>
+
+        <form method="GET" action="{% url 'index_catalogo' %}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <!-- Búsqueda General -->
+            <div class="lg:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Buscar Maquinaria / SKU / Marca</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Ej: Excavadora CAT, Layher, Cummins..." 
+                           class="w-full pl-10 pr-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition">
+                </div>
+            </div>
+
+            <!-- Categoría -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Categoría</label>
+                <select name="categoria" class="w-full py-2.5 px-3 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 transition">
+                    <option value="">Todas las Categorías</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Rango Precios -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Tarifa Diaria Máx ($)</label>
+                <input type="number" name="max_precio" value="{{ request.GET.max_precio|default:'' }}" placeholder="Ej: 250000" 
+                       class="w-full py-2.5 px-3 bg-slate-900/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition">
+            </div>
+
+            <!-- Botón Aplicar -->
+            <div>
+                <button type="submit" class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> Aplicar Filtros
+                </button>
+            </div>
+        </form>
+
+        <!-- Category Badges / Chips -->
+        <div class="flex flex-wrap items-center gap-2 pt-2">
+            <span class="text-xs font-semibold text-slate-400 mr-2">Categorías Rápidas:</span>
+            <a href="{% url 'index_catalogo' %}" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if not request.GET.categoria_slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
+                Todas
+            </a>
+            {% for cat in categorias %}
+                <a href="?categoria_slug={{ cat.slug }}" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if request.GET.categoria_slug == cat.slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
+                    <i class="fa-solid {{ cat.icono }} mr-1 text-[10px]"></i> {{ cat.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- LISTADO DE MAQUINARIAS (GRID) -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-amber-400"></i> Maquinaria Disponible para Arriendo
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono">{{ maquinarias|length }} unidades</span>
+            </h2>
+        </div>
+
+        {% if maquinarias %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for maq in maquinarias %}
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition flex flex-col group shadow-xl">
+                        <!-- Machine Image -->
+                        <div class="relative h-52 overflow-hidden bg-slate-950">
+                            <img src="{{ maq.imagen_url }}" alt="{{ maq.nombre }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
+                            
+                            <!-- Badges on Image -->
+                            <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-slate-900/90 text-amber-400 border border-amber-500/30 backdrop-blur">
+                                    {{ maq.categoria.nombre }}
+                                </span>
+                                <span class="px-2 py-1 rounded-md text-[10px] font-mono font-bold bg-slate-900/90 text-slate-300 border border-slate-700">
+                                    {{ maq.codigo_sku }}
+                                </span>
+                            </div>
+
+                            <!-- Stock Badge -->
+                            <div class="absolute top-3 right-3">
+                                {% if maq.tiene_stock_disponible %}
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-500/40 backdrop-blur flex items-center gap-1.5 shadow-lg">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                        {{ maq.flota_disponible }}/{{ maq.flota_total }} Disponibles
+                                    </span>
+                                {% else %}
+                                    <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-950/90 text-rose-300 border border-rose-500/40 backdrop-blur">
+                                        Sin Unidades Libres
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Title & Brand on bottom of image -->
+                            <div class="absolute bottom-3 left-3 right-3">
+                                <p class="text-xs text-amber-400 font-bold uppercase tracking-wider">{{ maq.marca }} • {{ maq.modelo }}</p>
+                                <h3 class="text-lg font-extrabold text-white leading-snug drop-shadow-md">{{ maq.nombre }}</h3>
+                            </div>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                            <p class="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                                {{ maq.descripcion }}
+                            </p>
+
+                            <!-- Pricing Matrix Box -->
+                            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-slate-400 font-medium">Tarifa por Día:</span>
+                                    <span class="text-base font-extrabold text-white font-mono">${{ maq.tarifa_diaria|floatformat:0 }} <span class="text-[10px] text-slate-400 font-normal">CLP/día</span></span>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-slate-800 pt-1.5">
+                                    <span class="text-xs text-slate-400 font-medium">Garantía Fija Requerida:</span>
+                                    <span class="text-xs font-bold text-amber-400 font-mono">${{ maq.monto_garantia|floatformat:0 }} CLP</span>
+                                </div>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <div>
+                                {% if user.is_authenticated %}
+                                    {% if user.rol == 'EMPRESA_CONSTRUCTORA' or user.is_superuser %}
+                                        <button type="button" 
+                                                onclick="abrirModalArriendo('{{ maq.id }}', '{{ maq.nombre|escapejs }}', '{{ maq.tarifa_diaria }}', '{{ maq.monto_garantia }}', '{{ maq.flota_disponible }}')"
+                                                class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                                            <i class="fa-solid fa-cart-plus text-base"></i> Configurar Fechas y Arrendar
+                                        </button>
+                                    {% else %}
+                                        <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-center text-xs text-slate-400">
+                                            <i class="fa-solid fa-user-gear mr-1 text-purple-400"></i> Vista de Gestión Administrativa
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'login' %}?next={% url 'index_catalogo' %}" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-lock text-xs text-amber-400"></i> Iniciar Sesión para Arrendar
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="glass-panel rounded-2xl p-12 text-center border border-slate-800 space-y-4">
+                <div class="w-16 h-16 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-400 text-2xl">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">No se encontraron maquinarias</h3>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">No hay equipos que coincidan con los criterios de búsqueda o filtros seleccionados.</p>
+                <a href="{% url 'index_catalogo' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl">
+                    Ver Todo el Catálogo
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- MODAL INTERACTIVO DE ARRIENDO CON CÁLCULO EN VIVO -->
+<div id="modalArriendo" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl border border-slate-700 max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+        <button type="button" onclick="cerrarModalArriendo()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="space-y-1">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Configuración de Período de Uso</span>
+            <h3 id="modalTituloMaquinaria" class="text-xl font-black text-white">Excavadora Hidráulica</h3>
+            <p class="text-xs text-slate-400">Los valores del arriendo y garantía se calculan en tiempo real.</p>
+        </div>
+
+        <form id="formAgregarCarro" onsubmit="enviarAlCarro(event)" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" id="modalMaquinariaId" name="maquinaria_id">
+            <input type="hidden" id="modalTarifaDiaria" value="0">
+            <input type="hidden" id="modalMontoGarantia" value="0">
+
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Fecha Inicio -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Fecha Inicio <span class="text-amber-400">*</span></label>
+                    <input type="date" id="inputFechaInicio" name="fecha_inicio" required onchange="calcularTotalesModal()"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <!-- Fecha Fin -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Fecha Término <span class="text-amber-400">*</span></label>
+                    <input type="date" id="inputFechaFin" name="fecha_fin" required onchange="calcularTotalesModal()"
+                           class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
+            <!-- Cantidad de Unidades -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Cantidad de Unidades Físicas</label>
+                <div class="flex items-center space-x-3">
+                    <input type="number" id="inputCantidad" name="cantidad" min="1" value="1" required onchange="calcularTotalesModal()"
+                           class="w-32 py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500">
+                    <span id="modalStockMaximo" class="text-xs text-slate-400 font-mono">Disponibles: 5</span>
+                </div>
+            </div>
+
+            <!-- Resumen Desglosado en Tiempo Real -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                <div class="flex justify-between text-xs text-slate-300">
+                    <span>Días de Operación:</span>
+                    <span id="previewDias" class="font-bold text-white font-mono">1 día</span>
+                </div>
+                <div class="flex justify-between text-xs text-slate-300">
+                    <span>Subtotal Arriendo (<span id="previewDiasCalc">1</span> días x $<span id="previewTarifa">0</span>):</span>
+                    <span id="previewSubtotalArriendo" class="font-bold text-white font-mono">$0 CLP</span>
+                </div>
+                <div class="flex justify-between text-xs text-slate-300">
+                    <span>Garantía Fija Requerida:</span>
+                    <span id="previewSubtotalGarantia" class="font-bold text-amber-400 font-mono">$0 CLP</span>
+                </div>
+                <div class="flex justify-between text-sm font-extrabold text-white border-t border-slate-800 pt-2">
+                    <span>Total Estimado del Ítem:</span>
+                    <span id="previewTotalGeneral" class="text-amber-400 font-mono text-base">$0 CLP</span>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center space-x-3">
+                <button type="button" onclick="cerrarModalArriendo()" class="w-1/3 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                    Cancelar
+                </button>
+                <button type="submit" id="btnConfirmarCarro" class="w-2/3 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cart-arrow-down"></i> Agregar al Carro
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Inicialización de Fechas por Defecto (Hoy y Mañana)
+    const hoy = new Date().toISOString().split('T')[0];
+    const manana = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+    function abrirModalArriendo(id, nombre, tarifa, garantia, stockMax) {
+        document.getElementById('modalMaquinariaId').value = id;
+        document.getElementById('modalTituloMaquinaria').innerText = nombre;
+        document.getElementById('modalTarifaDiaria').value = tarifa;
+        document.getElementById('modalMontoGarantia').value = garantia;
+        document.getElementById('modalStockMaximo').innerText = `Disponibles en flota: ${stockMax}`;
+        
+        const inputCant = document.getElementById('inputCantidad');
+        inputCant.max = stockMax;
+        inputCant.value = 1;
+
+        const fIni = document.getElementById('inputFechaInicio');
+        const fFin = document.getElementById('inputFechaFin');
+        fIni.min = hoy;
+        fIni.value = hoy;
+        fFin.min = hoy;
+        fFin.value = manana;
+
+        calcularTotalesModal();
+        document.getElementById('modalArriendo').classList.remove('hidden');
+    }
+
+    function cerrarModalArriendo() {
+        document.getElementById('modalArriendo').classList.add('hidden');
+    }
+
+    function calcularTotalesModal() {
+        const tarifa = parseFloat(document.getElementById('modalTarifaDiaria').value) || 0;
+        const garantia = parseFloat(document.getElementById('modalMontoGarantia').value) || 0;
+        const cantidad = parseInt(document.getElementById('inputCantidad').value) || 1;
+        
+        const fIniVal = document.getElementById('inputFechaInicio').value;
+        const fFinVal = document.getElementById('inputFechaFin').value;
+
+        let dias = 1;
+        if (fIniVal && fFinVal) {
+            const d1 = new Date(fIniVal);
+            const d2 = new Date(fFinVal);
+            const diffTime = d2 - d1;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            dias = diffDays > 0 ? diffDays : 1;
+        }
+
+        const subArriendo = dias * tarifa * cantidad;
+        const subGarantia = garantia * cantidad;
+        const total = subArriendo + subGarantia;
+
+        document.getElementById('previewDias').innerText = `${dias} día(s)`;
+        document.getElementById('previewDiasCalc').innerText = dias;
+        document.getElementById('previewTarifa').innerText = tarifa.toLocaleString('es-CL');
+        document.getElementById('previewSubtotalArriendo').innerText = `$${subArriendo.toLocaleString('es-CL')} CLP`;
+        document.getElementById('previewSubtotalGarantia').innerText = `$${subGarantia.toLocaleString('es-CL')} CLP`;
+        document.getElementById('previewTotalGeneral').innerText = `$${total.toLocaleString('es-CL')} CLP`;
+    }
+
+    async function enviarAlCarro(event) {
+        event.preventDefault();
+        const maquinariaId = document.getElementById('modalMaquinariaId').value;
+        const cantidad = document.getElementById('inputCantidad').value;
+        const fechaInicio = document.getElementById('inputFechaInicio').value;
+        const fechaFin = document.getElementById('inputFechaFin').value;
+
+        try {
+            const response = await fetch('/api/carro-arriendo/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    maquinaria_id: parseInt(maquinariaId),
+                    cantidad: parseInt(cantidad),
+                    fecha_inicio: fechaInicio,
+                    fecha_fin: fechaFin
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Agregado al Carro!',
+                    text: 'El equipo ha sido guardado de forma persistente en PostgreSQL.',
+                    icon: 'success',
+                    confirmButtonColor: '#f59e0b',
+                    confirmButtonText: 'Ir al Carro de Arriendo',
+                    showCancelButton: true,
+                    cancelButtonText: 'Seguir Explorando'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '{% url "carro_view" %}';
+                    } else {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error al agregar',
+                    text: data.error || JSON.stringify(data),
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Error de Red',
+                text: 'No fue posible comunicar con el servidor.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+        }
+    }
+</script>
+{% endblock %}
