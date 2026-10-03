@@ -50,9 +50,9 @@ def carro_view(request):
     """
     Vista del Carro de Arriendo persistente del cliente.
     """
-    if request.user.rol != RolUsuario.EMPRESA_CONSTRUCTORA and not request.user.is_superuser:
-        messages.warning(request, 'El carro de arriendo está disponible únicamente para Empresas Constructoras.')
-        return redirect('index_catalogo')
+    if request.user.rol == RolUsuario.EJECUTIVO_ARRIENDOS:
+        messages.info(request, 'El carro de arriendos es para Clientes Constructoras. Como Ejecutivo dispone del CRUD y Gestión de Contratos.')
+        return redirect('admin_contratos_view')
 
     carro, _ = CarroArriendo.objects.get_or_create(usuario=request.user)
     items = carro.items.select_related('maquinaria__categoria').all()
@@ -68,9 +68,9 @@ def mis_contratos_view(request):
     """
     Portal de contratos históricos para la Empresa Constructora autenticada.
     """
-    if request.user.rol != RolUsuario.EMPRESA_CONSTRUCTORA and not request.user.is_superuser:
-        messages.warning(request, 'La sección de Mis Contratos está reservada para Empresas Constructoras.')
-        return redirect('index_catalogo')
+    if request.user.rol == RolUsuario.EJECUTIVO_ARRIENDOS:
+        # Redirigir a la Consola Global de Gestión de Contratos para Ejecutivos
+        return redirect('admin_contratos_view')
 
     contratos = ContratoArriendo.objects.filter(cliente=request.user).prefetch_related('detalles', 'historial_estados').order_by('-creado_en')
     return render(request, 'web_ui/mis_contratos.html', {

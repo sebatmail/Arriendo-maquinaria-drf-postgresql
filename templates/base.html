@@ -82,7 +82,7 @@
                     </a>
 
                     {% if user.is_authenticated %}
-                        {% if user.rol == 'EMPRESA_CONSTRUCTORA' or user.is_superuser %}
+                        {% if user.rol == 'EMPRESA_CONSTRUCTORA' %}
                             <a href="{% url 'carro_view' %}" class="relative px-3 py-2 rounded-lg text-sm font-semibold hover:text-amber-400 hover:bg-slate-800/80 transition {% if request.resolver_match.url_name == 'carro_view' %}text-amber-400 bg-slate-800{% else %}text-slate-300{% endif %}">
                                 <i class="fa-solid fa-cart-flatbed mr-1.5"></i> Carro de Arriendo
                                 {% if user.carro_activo and user.carro_activo.cantidad_items > 0 %}
