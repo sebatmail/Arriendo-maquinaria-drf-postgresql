@@ -37,8 +37,8 @@ class Command(BaseCommand):
             username='admin_ejecutivo',
             defaults={
                 'email': 'ejecutivo@rent-equip.pro',
-                'first_name': 'Roberto',
-                'last_name': 'Vargas',
+                'first_name': 'Sebastián',
+                'last_name': 'Torres Zamorano (Ejecutivo)',
                 'rol': RolUsuario.EJECUTIVO_ARRIENDOS,
                 'razon_social': 'Rent-Equip Pro SpA - Casa Matriz',
                 'rut_empresa': '76.999.888-K',
