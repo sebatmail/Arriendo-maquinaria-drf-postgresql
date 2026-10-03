@@ -1,10 +1,10 @@
 """
 ================================================================================
-SISTEMA DE ARRIENDO DE MAQUINARIA DE CONSTRUCCIÓN (RENTING / SERVICIOS)
-EVA-2: Evaluación y Pauta de Trabajo Backend - Django REST Framework + PostgreSQL
+RENT-EQUIP PRO | SISTEMA INDUSTRIAL DE ARRIENDO DE MAQUINARIA PESADA
+Desarrollado para Plataforma B2B SaaS • Momentum Space
 ================================================================================
-Configuración principal del proyecto Django con estándares de arquitectura enterprise.
-Implementa seguridad JWT, filtrado dinámico, documentación OpenAPI y soporte PostgreSQL.
+Configuración principal de producción con soporte para MySQL / PostgreSQL,
+autenticación JWT RBAC, filtrado dinámico y documentación OpenAPI.
 """
 
 import os
@@ -12,16 +12,26 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-eva2-arriendo-maquinaria-top-tier-enterprise-2026-renting-system')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-rent-equip-pro-momentum-space-enterprise-2026')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'proyecto-backend.momentumspace.cl',
+    'www.proyecto-backend.momentumspace.cl',
+    'momentumspace.cl',
+    'localhost',
+    '127.0.0.1',
+    '*',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://proyecto-backend.momentumspace.cl',
+    'http://proyecto-backend.momentumspace.cl',
+    'https://*.momentumspace.cl',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,7 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'web_ui.context_processors.evaluacion_footer_info',
+                'web_ui.context_processors.enterprise_footer_info',
             ],
         },
     },
@@ -77,15 +87,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ==============================================================================
-# BLOQUE DE CONFIGURACIÓN DE BASE DE DATOS: PostgreSQL (Cumplimiento Pauta EVA-2)
+# CONFIGURACIÓN DE BASE DE DATOS (PRODUCCIÓN CPANEL / LOCAL)
+# Soporta MySQL (phpMyAdmin) y PostgreSQL de forma transparente
 # ==============================================================================
-# Motor nativo configurado: django.db.backends.postgresql
-DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
-DB_NAME = config('DB_NAME', default='arriendo_maquinaria_db')
-DB_USER = config('DB_USER', default='postgres')
-DB_PASSWORD = config('DB_PASSWORD', default='postgres')
+DB_ENGINE = config('DB_ENGINE', default='django.db.backends.mysql')
+DB_NAME = config('DB_NAME', default='altoplagas_Proyecto_Backend')
+DB_USER = config('DB_USER', default='Proyecto_Backend1')
+DB_PASSWORD = config('DB_PASSWORD', default='Proyecto_Backend333*')
 DB_HOST = config('DB_HOST', default='localhost')
-DB_PORT = config('DB_PORT', default='5432')
+DB_PORT = config('DB_PORT', default='3306')
 
 DATABASES = {
     'default': {
@@ -95,10 +105,12 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        } if 'mysql' in DB_ENGINE else {},
     }
 }
 
-# Configuración de fallback transparente si PostgreSQL requiere inicialización local rápida
 USE_SQLITE_FALLBACK = config('USE_SQLITE_FALLBACK', default=False, cast=bool)
 if USE_SQLITE_FALLBACK:
     DATABASES['default'] = {
@@ -111,7 +123,6 @@ if USE_SQLITE_FALLBACK:
 # ==============================================================================
 AUTH_USER_MODEL = 'authentication.Usuario'
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -128,13 +139,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'America/Santiago'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -183,16 +192,16 @@ SIMPLE_JWT = {
 }
 
 # ==============================================================================
-# CONFIGURACIÓN DE DOCUMENTACIÓN OPENAPI / SWAGGER (DRF-SPECTACULAR)
+# CONFIGURACIÓN DE DOCUMENTACIÓN OPENAPI / SWAGGER
 # ==============================================================================
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'API Arriendo de Maquinaria de Construcción (Renting & Flota)',
+    'TITLE': 'API Industrial de Arriendo de Maquinaria (RENT-EQUIP PRO)',
     'DESCRIPTION': (
-        'Documentación técnica oficial para la plataforma de arriendo de maquinaria pesada. '
-        'Implementa autenticación JWT, persistencia de carros de arriendo, '
-        'control de concurrencia atómica de flota e inventario, y matriz RBAC.'
+        'Documentación técnica oficial de la plataforma de arriendo y gestión de flota industrial. '
+        'Implementa autenticación JWT, persistencia de carros de arriendo en base de datos, '
+        'control transaccional atómico de flota e inventario, y matriz RBAC.'
     ),
-    'VERSION': '2.0.0 Enterprise',
+    'VERSION': '2.4.0 Enterprise',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     'SWAGGER_UI_SETTINGS': {
@@ -203,13 +212,13 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ==============================================================================
-# METADATOS DEL ALUMNO PARA FOOTER Y EVALUACIÓN
+# METADATOS CORPORATIVOS DE PORTAFOLIO (MOMENTUM SPACE)
 # ==============================================================================
-ALUMNO_INFO = {
-    'NOMBRE_COMPLETO': config('ALUMNO_NOMBRE', default='Sebastián Torres Zamorano'),
-    'PROFESOR': config('PROFESOR_NOMBRE', default='Marcelo Patricio Alvarado Aravena'),
-    'SECCION': config('ALUMNO_SECCION', default='AP-N4-C1'),
-    'ANO': config('ALUMNO_ANO', default='2026'),
-    'PROYECTO': 'Proyecto 6: Arriendo de Maquinaria de Construcción (Renting / Servicios)',
-    'ASIGNATURA': 'Desarrollo Backend (EVA-2)',
+PLATAFORMA_INFO = {
+    'NOMBRE_PLATAFORMA': 'RENT-EQUIP PRO',
+    'ORGANIZACION': 'Momentum Space Cloud Solutions',
+    'DOMINIO': 'proyecto-backend.momentumspace.cl',
+    'VERSION': 'v2.4.0 Enterprise',
+    'ANO': '2026',
+    'CONTACTO_SOPORTE': 'soporte@momentumspace.cl',
 }

@@ -1,24 +1,24 @@
 """
 ================================================================================
-CONTEXT PROCESSORS - METADATOS Y FOOTER DEL ESTUDIANTE (EVA-2)
+CONTEXT PROCESSORS - METADATOS CORPORATIVOS DE PORTAFOLIO
 ================================================================================
-Permite la inyección global de las variables de autoría del estudiante, profesor
-y sección institucional en todos los templates del sistema.
+Inyecta la identidad corporativa de la plataforma RENT-EQUIP PRO en todos los
+templates del sistema.
 """
 
 from django.conf import settings
 
-def evaluacion_footer_info(request):
+def enterprise_footer_info(request):
     """
-    Inyecta datos institucionales y de autoría en el contexto de renderizado HTML.
+    Inyecta metadatos empresariales en el contexto de renderizado HTML.
     """
     return {
-        'alumno_info': getattr(settings, 'ALUMNO_INFO', {
-            'NOMBRE_COMPLETO': 'Sebastián Torres Zamorano',
-            'PROFESOR': 'Marcelo Patricio Alvarado Aravena',
-            'SECCION': 'AP-N4-C1',
+        'plataforma_info': getattr(settings, 'PLATAFORMA_INFO', {
+            'NOMBRE_PLATAFORMA': 'RENT-EQUIP PRO',
+            'ORGANIZACION': 'Momentum Space Cloud Solutions',
+            'DOMINIO': 'proyecto-backend.momentumspace.cl',
+            'VERSION': 'v2.4.0 Enterprise',
             'ANO': '2026',
-            'PROYECTO': 'Proyecto 6: Arriendo de Maquinaria de Construcción',
-            'ASIGNATURA': 'Desarrollo Backend (EVA-2)',
+            'CONTACTO_SOPORTE': 'soporte@momentumspace.cl',
         })
     }

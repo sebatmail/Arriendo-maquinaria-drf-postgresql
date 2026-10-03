@@ -16,8 +16,7 @@ DATOS DE IDENTIFICACIÓN:
 ESTIMADO PROFESOR MARCELO PATRICIO ALVARADO:
 --------------------------------------------------------------------------------
 A continuación, presento la entrega formal del desarrollo backend correspondiente
-a la Evaluación EVA-2. La solución ha sido construida bajo estándares de calidad
-Senior Enterprise, cumpliendo estrictamente con los requerimientos de la pauta,
+a la Evaluación EVA-2. La solución ha sido construida bajo estándares de calidad, cumpliendo estrictamente con los requerimientos de la pauta,
 las directrices dadas en clases (CRUD templates, Swagger exclusivo para Admin con
 Header Admin, y normalización estricta en 3FN), e integrando PostgreSQL nativo.
 

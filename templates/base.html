@@ -164,8 +164,8 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- ENTERPRISE FOOTER (CUMPLIMIENTO ESTRICTO PAUTA EVA-2) -->
-    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-8 text-slate-400">
+    <!-- ENTERPRISE FOOTER (MOMENTUM SPACE PORTFOLIO) -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/95 py-8 text-slate-400">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800/60">
                 <!-- Info 1 -->
@@ -174,52 +174,51 @@
                         <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
                             <i class="fa-solid fa-tractor"></i>
                         </div>
-                        <span class="text-lg font-bold text-white tracking-tight">RENT-EQUIP PRO ARCHITECTURE</span>
+                        <span class="text-lg font-bold text-white tracking-tight">{{ plataforma_info.NOMBRE_PLATAFORMA }} ENTERPRISE</span>
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed pr-6">
-                        Sistema integral de arriendo de maquinaria industrial desarrollado con Django REST Framework y PostgreSQL.
-                        Implementa arquitectura normalizada en 3FN, tokens JWT con claims de rol (RBAC), control transaccional atómico
-                        de inventario y persistencia post-logout en base de datos.
+                        Plataforma SaaS B2B de arriendo de maquinaria pesada, herramientas industriales y gestión de flota en faena.
+                        Diseñada sobre arquitectura relacional en 3FN con Django REST Framework, autenticación JWT basada en roles (RBAC)
+                        y control transaccional atómico de disponibilidad en base de datos.
                     </p>
                     <div class="flex flex-wrap gap-2 pt-2">
-                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">PostgreSQL Native</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">Enterprise SLA 99.9%</span>
                         <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">DRF + SimpleJWT</span>
                         <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">3FN Normalized</span>
                         <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-300 font-mono">ACID Transactions</span>
                     </div>
                 </div>
 
-                <!-- Info 2: Metadatos del Alumno y Docente Obligatorios -->
+                <!-- Info 2: Especificaciones Técnicas y Soporte -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Ficha Técnica de Evaluación</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Ficha de Infraestructura</h4>
                     <ul class="text-xs space-y-1.5 text-slate-300">
-                        <li><strong class="text-white">Estudiante:</strong> {{ alumno_info.NOMBRE_COMPLETO }}</li>
-                        <li><strong class="text-white">Docente:</strong> {{ alumno_info.PROFESOR }}</li>
-                        <li><strong class="text-white">Sección:</strong> {{ alumno_info.SECCION }}</li>
-                        <li><strong class="text-white">Año Académico:</strong> {{ alumno_info.ANO }}</li>
-                        <li><strong class="text-white">Asignatura:</strong> {{ alumno_info.ASIGNATURA }}</li>
-                        <li><strong class="text-white">Proyecto:</strong> N°6 Arriendo Maquinaria</li>
+                        <li><strong class="text-white">Organización:</strong> {{ plataforma_info.ORGANIZACION }}</li>
+                        <li><strong class="text-white">Dominio:</strong> {{ plataforma_info.DOMINIO }}</li>
+                        <li><strong class="text-white">Versión:</strong> {{ plataforma_info.VERSION }}</li>
+                        <li><strong class="text-white">Soporte:</strong> {{ plataforma_info.CONTACTO_SOPORTE }}</li>
+                        <li><strong class="text-white">Cobertura:</strong> Santiago & Faenas Nacionales</li>
                     </ul>
                 </div>
 
                 <!-- Info 3: Enlaces Técnicos -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">Acceso a Servicios API</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">Servicios & Documentación</h4>
                     <ul class="text-xs space-y-1.5">
                         <li><a href="/api/docs/" target="_blank" class="text-amber-400 hover:underline flex items-center gap-1.5"><i class="fa-solid fa-code text-[10px]"></i> Swagger OpenAPI UI (/api/docs/)</a></li>
                         <li><a href="/api/redoc/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-book text-[10px]"></i> ReDoc (/api/redoc/)</a></li>
                         <li><a href="/api/schema/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-[10px]"></i> OpenAPI JSON Schema</a></li>
-                        <li><a href="/admin/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Django Admin Core</a></li>
+                        <li><a href="/admin/" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Django Admin Console</a></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Bottom Copyright & Student Badge -->
+            <!-- Bottom Copyright -->
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
-                <p>© {{ alumno_info.ANO }} RENT-EQUIP PRO. Todos los derechos reservados. Desarrollo individual para evaluación EVA-2.</p>
+                <p>© {{ plataforma_info.ANO }} {{ plataforma_info.NOMBRE_PLATAFORMA }}. Todos los derechos reservados. Desarrollado por {{ plataforma_info.ORGANIZACION }}.</p>
                 <div class="flex items-center space-x-2 mt-3 sm:mt-0">
-                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="text-slate-300 font-semibold">PostgreSQL Conectado & Operativo</span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-slate-300 font-semibold">Sistema de Base de Datos Operativo</span>
                 </div>
             </div>
         </div>
