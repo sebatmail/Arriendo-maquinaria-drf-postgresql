@@ -12,15 +12,27 @@
         </div>
         <div class="relative z-10 max-w-3xl space-y-4">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                <i class="fa-solid fa-sparkles"></i> Flota Certificada 2026 en 3FN
+                <i class="fa-solid fa-shield-halved"></i> Flota Certificada 2026 en 3FN • PostgreSQL Activo
             </div>
             <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
                 Arriendo de Maquinaria Pesada para <span class="text-amber-400">Grandes Faenas</span>
             </h1>
             <p class="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-                Excavadoras, generadores diésel, torres Layher y hormigoneras de alto tonelaje.
-                Tarifas por día congeladas por contrato y reserva transaccional con persistencia en PostgreSQL.
+                Excavadoras hidráulicas, grupos electrógenos, torres Layher y plantas de hormigón.
+                Tarifas diarias congeladas por contrato y reserva transaccional con persistencia en PostgreSQL.
             </p>
+            
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+                <a href="#seccion-catalogo" class="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-cubes-stacked"></i> Explorar Maquinarias Disponibles
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'registro' %}" class="px-6 py-3.5 bg-slate-800/90 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-amber-400"></i> Registrar Empresa Constructora
+                    </a>
+                {% endif %}
+            </div>
+
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-slate-200">
                 <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
                     <p class="text-2xl font-bold text-amber-400">{{ maquinarias|length }}</p>
@@ -35,15 +47,15 @@
                     <p class="text-xs text-slate-400">Concurrencia Atómica</p>
                 </div>
                 <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
-                    <p class="text-2xl font-bold text-purple-400">24/7</p>
-                    <p class="text-xs text-slate-400">Persistencia DB</p>
+                    <p class="text-2xl font-bold text-purple-400">PostgreSQL</p>
+                    <p class="text-xs text-slate-400">Persistencia 3FN</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- FILTROS DECLARATIVOS (DJANGO-FILTER) -->
-    <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+    <div id="seccion-catalogo" class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 scroll-mt-28">
         <div class="flex items-center justify-between pb-3 border-b border-slate-800">
             <h3 class="text-base font-bold text-white flex items-center gap-2">
                 <i class="fa-solid fa-filter text-amber-400"></i> Filtros de Búsqueda Avanzada (django-filter)
@@ -95,11 +107,11 @@
         <!-- Category Badges / Chips -->
         <div class="flex flex-wrap items-center gap-2 pt-2">
             <span class="text-xs font-semibold text-slate-400 mr-2">Categorías Rápidas:</span>
-            <a href="{% url 'index_catalogo' %}" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if not request.GET.categoria_slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
+            <a href="{% url 'index_catalogo' %}#seccion-catalogo" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if not request.GET.categoria_slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
                 Todas
             </a>
             {% for cat in categorias %}
-                <a href="?categoria_slug={{ cat.slug }}" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if request.GET.categoria_slug == cat.slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
+                <a href="?categoria_slug={{ cat.slug }}#seccion-catalogo" class="px-3 py-1 rounded-lg text-xs font-medium border transition {% if request.GET.categoria_slug == cat.slug %}bg-amber-500 text-slate-950 border-amber-500 font-bold{% else %}bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500/50{% endif %}">
                     <i class="fa-solid {{ cat.icono }} mr-1 text-[10px]"></i> {{ cat.nombre }}
                 </a>
             {% endfor %}
@@ -118,7 +130,7 @@
         {% if maquinarias %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for maq in maquinarias %}
-                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition flex flex-col group shadow-xl">
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition flex flex-col justify-between group shadow-xl">
                         <!-- Machine Image -->
                         <div class="relative h-52 overflow-hidden bg-slate-950">
                             <img src="{{ maq.imagen_url }}" alt="{{ maq.nombre }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
@@ -139,7 +151,7 @@
                                 {% if maq.tiene_stock_disponible %}
                                     <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-500/40 backdrop-blur flex items-center gap-1.5 shadow-lg">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                                        {{ maq.flota_disponible }}/{{ maq.flota_total }} Disponibles
+                                        {{ maq.flota_disponible }}/{{ maq.flota_total }} Libres
                                     </span>
                                 {% else %}
                                     <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-950/90 text-rose-300 border border-rose-500/40 backdrop-blur">
@@ -173,24 +185,18 @@
                                 </div>
                             </div>
 
-                            <!-- CTA Button -->
+                            <!-- CTA Button: Disponible para todos con validación -->
                             <div>
-                                {% if user.is_authenticated %}
-                                    {% if user.rol == 'EMPRESA_CONSTRUCTORA' or user.is_superuser %}
-                                        <button type="button" 
-                                                onclick="abrirModalArriendo('{{ maq.id }}', '{{ maq.nombre|escapejs }}', '{{ maq.tarifa_diaria }}', '{{ maq.monto_garantia }}', '{{ maq.flota_disponible }}')"
-                                                class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 group-hover:scale-[1.02]">
-                                            <i class="fa-solid fa-cart-plus text-base"></i> Configurar Fechas y Arrendar
-                                        </button>
-                                    {% else %}
-                                        <div class="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-center text-xs text-slate-400">
-                                            <i class="fa-solid fa-user-gear mr-1 text-purple-400"></i> Vista de Gestión Administrativa
-                                        </div>
-                                    {% endif %}
+                                {% if user.is_authenticated and user.rol == 'EJECUTIVO_ARRIENDOS' %}
+                                    <div class="p-2.5 rounded-xl bg-purple-950/60 border border-purple-800/60 text-center text-xs text-purple-300">
+                                        <i class="fa-solid fa-user-gear mr-1"></i> Modo Ejecutivo: Use el CRUD para editar
+                                    </div>
                                 {% else %}
-                                    <a href="{% url 'login' %}?next={% url 'index_catalogo' %}" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-                                        <i class="fa-solid fa-lock text-xs text-amber-400"></i> Iniciar Sesión para Arrendar
-                                    </a>
+                                    <button type="button" 
+                                            onclick="abrirModalArriendo('{{ maq.id }}', '{{ maq.nombre|escapejs }}', '{{ maq.tarifa_diaria }}', '{{ maq.monto_garantia }}', '{{ maq.flota_disponible }}', {% if user.is_authenticated %}true{% else %}false{% endif %})"
+                                            class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                                        <i class="fa-solid fa-cart-plus text-sm"></i> Configurar Fechas y Arrendar
+                                    </button>
                                 {% endif %}
                             </div>
                         </div>
@@ -232,6 +238,7 @@
             <input type="hidden" id="modalMaquinariaId" name="maquinaria_id">
             <input type="hidden" id="modalTarifaDiaria" value="0">
             <input type="hidden" id="modalMontoGarantia" value="0">
+            <input type="hidden" id="modalUsuarioAutenticado" value="false">
 
             <div class="grid grid-cols-2 gap-4">
                 <!-- Fecha Inicio -->
@@ -280,7 +287,7 @@
 
             <div class="pt-2 flex items-center space-x-3">
                 <button type="button" onclick="cerrarModalArriendo()" class="w-1/3 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
-                    Cancelar
+                    Cerrar
                 </button>
                 <button type="submit" id="btnConfirmarCarro" class="w-2/3 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cart-arrow-down"></i> Agregar al Carro
@@ -293,16 +300,16 @@
 
 {% block extra_scripts %}
 <script>
-    // Inicialización de Fechas por Defecto (Hoy y Mañana)
     const hoy = new Date().toISOString().split('T')[0];
     const manana = new Date(Date.now() + 86400000).toISOString().split('T')[0];
 
-    function abrirModalArriendo(id, nombre, tarifa, garantia, stockMax) {
+    function abrirModalArriendo(id, nombre, tarifa, garantia, stockMax, isAuth) {
         document.getElementById('modalMaquinariaId').value = id;
         document.getElementById('modalTituloMaquinaria').innerText = nombre;
         document.getElementById('modalTarifaDiaria').value = tarifa;
         document.getElementById('modalMontoGarantia').value = garantia;
-        document.getElementById('modalStockMaximo').innerText = `Disponibles en flota: ${stockMax}`;
+        document.getElementById('modalUsuarioAutenticado').value = isAuth ? "true" : "false";
+        document.getElementById('modalStockMaximo').innerText = `Libres en flota: ${stockMax}`;
         
         const inputCant = document.getElementById('inputCantidad');
         inputCant.max = stockMax;
@@ -354,6 +361,29 @@
 
     async function enviarAlCarro(event) {
         event.preventDefault();
+        const isAuth = document.getElementById('modalUsuarioAutenticado').value === "true";
+
+        if (!isAuth) {
+            cerrarModalArriendo();
+            Swal.fire({
+                title: '¡Cotización Lista!',
+                html: '<p class="text-sm text-slate-300">Para persistir este arriendo en su <strong>Carro de PostgreSQL</strong> y confirmar el contrato, inicie sesión o regístrese como Empresa Constructora.</p>',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#0284c7',
+                confirmButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> Iniciar Sesión',
+                cancelButtonText: '<i class="fa-solid fa-user-plus"></i> Registrar Constructora'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{% url "login" %}?next={% url "index_catalogo" %}';
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    window.location.href = '{% url "registro" %}';
+                }
+            });
+            return;
+        }
+
         const maquinariaId = document.getElementById('modalMaquinariaId').value;
         const cantidad = document.getElementById('inputCantidad').value;
         const fechaInicio = document.getElementById('inputFechaInicio').value;

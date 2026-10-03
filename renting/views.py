@@ -349,6 +349,8 @@ class MisContratosListView(generics.ListAPIView):
     ordering = ['-creado_en']
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False) or not self.request.user.is_authenticated:
+            return ContratoArriendo.objects.none()
         return ContratoArriendo.objects.filter(cliente=self.request.user).prefetch_related('detalles', 'historial_estados')
 
 
@@ -361,6 +363,8 @@ class MiContratoDetailView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated, IsEmpresaConstructora]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False) or not self.request.user.is_authenticated:
+            return ContratoArriendo.objects.none()
         return ContratoArriendo.objects.filter(cliente=self.request.user).prefetch_related('detalles', 'historial_estados')
 
 

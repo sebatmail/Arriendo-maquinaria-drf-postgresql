@@ -206,7 +206,7 @@ SPECTACULAR_SETTINGS = {
 # METADATOS DEL ALUMNO PARA FOOTER Y EVALUACIÓN
 # ==============================================================================
 ALUMNO_INFO = {
-    'NOMBRE_COMPLETO': config('ALUMNO_NOMBRE', default='Sebastián Tapia'),
+    'NOMBRE_COMPLETO': config('ALUMNO_NOMBRE', default='Sebastián Torres Zamorano'),
     'SECCION': config('ALUMNO_SECCION', default='Backend DLY01'),
     'ANO': config('ALUMNO_ANO', default='2026'),
     'PROYECTO': 'Proyecto 6: Arriendo de Maquinaria de Construcción (Renting / Servicios)',

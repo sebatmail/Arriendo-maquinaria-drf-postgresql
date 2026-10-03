@@ -5,7 +5,7 @@
 ---
 
 ## 👨‍💻 Ficha Técnica de Autoría y Evaluación
-- **Estudiante:** Sebastián Tapia
+- **Estudiante:** Sebastián Torres Zamorano
 - **Sección:** Backend DLY01
 - **Año Académico:** 2026
 - **Asignatura:** Desarrollo Backend

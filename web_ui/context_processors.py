@@ -14,7 +14,7 @@ def evaluacion_footer_info(request):
     """
     return {
         'alumno_info': getattr(settings, 'ALUMNO_INFO', {
-            'NOMBRE_COMPLETO': 'Sebastián Tapia',
+            'NOMBRE_COMPLETO': 'Sebastián Torres Zamorano',
             'SECCION': 'Backend DLY01',
             'ANO': '2026',
             'PROYECTO': 'Proyecto 6: Arriendo de Maquinaria de Construcción',

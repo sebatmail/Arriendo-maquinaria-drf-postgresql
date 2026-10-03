@@ -55,7 +55,7 @@ class Command(BaseCommand):
             defaults={
                 'email': 'contacto@pacificospa.cl',
                 'first_name': 'Sebastián',
-                'last_name': 'Tapia',
+                'last_name': 'Torres Zamorano',
                 'rol': RolUsuario.EMPRESA_CONSTRUCTORA,
                 'razon_social': 'Constructora Del Pacífico SpA',
                 'rut_empresa': '76.452.120-3',
