@@ -1,21 +1,25 @@
 <div align="center">
 
 # 🚜 RENT-EQUIP PRO | Enterprise Industrial SaaS
-### **Plataforma de Arriendo de Maquinaria Pesada en 3FN con Django REST Framework & PostgreSQL Nativo**
+### **Plataforma de Arriendo de Maquinaria Pesada en 3FN con Django REST Framework & PostgreSQL**
 **Evaluación Backend EVA-2 (25% Ponderación Total • Puntaje: 100/100 • Nota 7.0)**
 
 ---
 
-[![Django Version](https://img.shields.io/badge/Django-6.0.1-092e20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![DRF](https://img.shields.io/badge/Django%20REST-3.18.0-red?style=for-the-badge&logo=django&logoColor=white)](https://www.django-rest-framework.org/)
+[![Live Demo](https://img.shields.io/badge/Live%20SaaS%20Web-PRODUCCI%C3%93N%20ACTIVA%20(ONLINE)-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://proyecto-backend.momentumspace.cl/)
+[![Django Version](https://img.shields.io/badge/Django-3.2%20%7C%205.0%2B-092e20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![DRF](https://img.shields.io/badge/Django%20REST-3.15%2B-red?style=for-the-badge&logo=django&logoColor=white)](https://www.django-rest-framework.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B%20Native-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![JWT Auth](https://img.shields.io/badge/Auth-SimpleJWT%20RBAC-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
-[![OpenAPI](https://img.shields.io/badge/API%20Docs-OpenAPI%203.0%20%2F%20Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](http://127.0.0.1:8000/api/docs/)
+[![OpenAPI](https://img.shields.io/badge/API%20Docs-OpenAPI%203.0%20%2F%20Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://proyecto-backend.momentumspace.cl/api/docs/)
 [![Architecture](https://img.shields.io/badge/Architecture-3FN%20Normalized-f59e0b?style=for-the-badge&logo=speedtest&logoColor=black)](#)
 [![Tests Status](https://img.shields.io/badge/Tests-100%25%20Passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#)
 
 <p align="center">
-  <b>Desarrollado bajo estándares del 1% superior de la industria tecnológica (Enterprise Architecture valorada en +€100.000)</b>
+  <b>🚀 Plataforma SaaS Operando en Producción Web (En Vivo):</b><br>
+  <a href="https://proyecto-backend.momentumspace.cl/"><b>👉 https://proyecto-backend.momentumspace.cl/ 👈</b></a><br><br>
+  <b>🌐 Visita mi sitio web oficial:</b><br>
+  <a href="https://momentumspace.cl/"><b>👉 https://momentumspace.cl/ 👈</b></a>
 </p>
 
 </div>
@@ -39,22 +43,23 @@
   </tr>
   <tr>
     <td><b>🎯 Ponderación:</b> 25% (70% Defensa Oral • 30% Desarrollo Técnico)</td>
-    <td><b>🐘 Base de Datos:</b> PostgreSQL Nativo (<code>arriendo_maquinaria_db</code>)</td>
+    <td><b>🌐 SaaS Operando en Producción:</b> <a href="https://proyecto-backend.momentumspace.cl/">proyecto-backend.momentumspace.cl</a></td>
   </tr>
 </table>
 
 ---
 
-## 🌟 Características Destacadas de Nivel Senior
+## 🌟 Características Destacadas de Nivel Enterprise
 
+- 🌐 **SaaS en Producción Operativa:** Plataforma desplegada y operativa en la nube con dominio propio, conexión HTTPS y soporte multi-dispositivo en [https://proyecto-backend.momentumspace.cl/](https://proyecto-backend.momentumspace.cl/).
 - 🛡️ **Autenticación JWT con Claims de Rol (RBAC):** Inyección de `rol` (`EMPRESA_CONSTRUCTORA` vs `EJECUTIVO_ARRIENDOS`), `user_id`, `razon_social` y `nombre_completo` directamente en el token de acceso.
 - 📦 **Carro de Arriendo Persistente (Post-Logout):** Relación 1 a 1 en base de datos PostgreSQL. Mantiene los ítems, fechas y cotizaciones calculadas aun al cerrar sesión o cambiar de dispositivo.
 - ⚡ **Control Transaccional Atómico (ACID):** Descuento atómico de flota mediante bloqueo pesimista `select_for_update()` al pasar al estado `PAGADO`. Previene condiciones de carrera (*Race Conditions*) y sobre-arriendo.
 - 🔄 **Reposición Automática de Flota:** Al transicionar un contrato a `COMPLETADO` (devolución del equipo) o `CANCELADO`, las unidades se reincorporan automáticamente al inventario libre del catálogo.
 - 📐 **Modelo Relacional Estrictamente en 3FN:** Desacoplamiento contable mediante snapshots históricos inmutables en `DetalleContratoArriendo` (`tarifa_diaria_congelada`, `monto_garantia_congelado`, `dias_totales`).
 - 🔍 **Filtrado Declarativo Avanzado (`django-filter`):** Búsqueda compuesta por categorías, slugs, rangos de precio de tarifa diaria, garantía y disponibilidad real.
-- 📑 **Swagger / OpenAPI 3.0 con Header Solo Admin:** Documentación técnica viva con `drf-spectacular` y portal `/documentacion/` con restricción exclusiva de Administrador requerida en clases.
-- 🎨 **Interfaz de Usuario Web Industrial:** Templates responsivos con Tailwind CSS, modales interactivos de cotización en tiempo real y panel CRUD administrativo.
+- 📑 **Swagger / OpenAPI 3.0 con Header Solo Admin:** Documentación técnica viva con `drf-spectacular` y portal `/documentacion/` con restricción exclusiva de Administrador requerida en pauta académica.
+- 🎨 **Interfaz de Usuario Web Industrial:** Templates responsivos con Tailwind CSS, fotografías HD generadas por IA de faena y panel CRUD administrativo.
 
 ---
 
@@ -100,12 +105,13 @@ erDiagram
         decimal monto_garantia
         int flota_total
         int flota_disponible
-        string estado_operativo "DISPONIBLE | MANTENCION | DE_BAJA"
+        string estado_operativo "DISPONIBLE | EN_MANTENCION"
+        string imagen_url
     }
 
     CARRO_ARRIENDO {
         int id PK
-        int usuario_id FK "Unique (1:1 con Usuario)"
+        int usuario_id FK,UK
         datetime actualizado_en
     }
 
@@ -119,140 +125,142 @@ erDiagram
     }
 
     CONTRATO_ARRIENDO {
-        uuid id PK
-        string numero_contrato UK "CTR-2026-XXXX"
+        int id PK
         int cliente_id FK
-        string estado "PENDIENTE | PAGADO | ENTREGADO | COMPLETADO | CANCELADO"
+        int ejecutivo_aprobador_id FK
+        string codigo_contrato UK
+        string estado "BORRADOR | PENDIENTE_PAGO | PAGADO | EN_FAENA | COMPLETADO | CANCELADO"
         decimal total_arriendo
         decimal total_garantias
         decimal total_general
         datetime pagado_en
-        datetime entregado_en
-        datetime completado_en
-        datetime cancelado_en
+        string direccion_faena
     }
 
     DETALLE_CONTRATO {
         int id PK
-        uuid contrato_id FK
+        int contrato_id FK
         int maquinaria_id FK
-        string nombre_equipo_congelado
-        string codigo_sku_congelado
         int cantidad
         date fecha_inicio
         date fecha_fin
         int dias_totales
-        decimal tarifa_diaria_congelada
-        decimal monto_garantia_congelado
-        decimal total_linea
+        decimal tarifa_diaria_congelada "Snapshot 3FN"
+        decimal monto_garantia_congelado "Snapshot 3FN"
+        decimal subtotal_arriendo
+        decimal subtotal_garantia
     }
 
     HISTORIAL_TRANSICION {
         int id PK
-        uuid contrato_id FK
+        int contrato_id FK
+        int usuario_ejecutor_id FK
         string estado_anterior
         string estado_nuevo
-        int cambiado_por FK
-        datetime fecha_registro
-        string comentarios
+        datetime fecha_cambio
+        string motivo
     }
 ```
 
 ---
 
-## 🔒 Matriz de Endpoints y Permisos RBAC API
+## ⚡ Flujo Transaccional Atómico y Concurrencia de Flota
 
-| Método | Endpoint | Rol Autorizado | Lógica de Negocio y Seguridad |
-| :---: | :--- | :---: | :--- |
-| `GET` | `/api/maquinarias/` | 🌐 **Público** | Catálogo general con filtrado `django-filter` por categoría, rango de tarifas y stock. |
-| `GET` | `/api/maquinarias/{id}/` | 🌐 **Público** | Detalle de maquinaria, especificaciones técnicas y monto de garantía fija. |
-| `GET` | `/api/categorias/` | 🌐 **Público** | Listado de familias industriales (Excavadoras, Generadores, Layher, Hormigón). |
-| `POST` | `/api/auth/login/` | 🌐 **Público** | Emisión de tokens JWT con claims de rol inyectados (`access` y `refresh`). |
-| `POST` | `/api/auth/registro/` | 🌐 **Público** | Registro de nuevas Empresas Constructoras en PostgreSQL. |
-| `GET` | `/api/carro-arriendo/` | 🏗️ **Empresa Constructora** | Consulta del carro activo persistido en base de datos. |
-| `POST` | `/api/carro-arriendo/` | 🏗️ **Empresa Constructora** | Agrega o actualiza ítems especificando `fecha_inicio` y `fecha_fin`. |
-| `DELETE` | `/api/carro-arriendo/items/{id}/` | 🏗️ **Empresa Constructora** | Remueve un ítem del carro persistente. |
-| `DELETE` | `/api/carro-arriendo/` | 🏗️ **Empresa Constructora** | Vacía completamente el carro activo del usuario. |
-| `POST` | `/api/contratos/checkout/` | 🏗️ **Empresa Constructora** | **Transacción Atómica:** Valida disponibilidad con bloqueo de fila (`select_for_update`), descuenta flota y emite contrato `PAGADO`. |
-| `GET` | `/api/mis-contratos/` | 🏗️ **Empresa Constructora** | Listado de contratos del cliente con precios congelados y auditoría. |
-| `POST` | `/api/maquinarias/` | ⚙️ **Ejecutivo / Admin** | Alta de nueva maquinaria en flota y catálogo. |
-| `PUT/PATCH` | `/api/maquinarias/{id}/` | ⚙️ **Ejecutivo / Admin** | Actualización de tarifas, garantías, unidades de flota y estado operativo. |
-| `DELETE` | `/api/maquinarias/{id}/` | ⚙️ **Ejecutivo / Admin** | Baja de equipo del catálogo. |
-| `GET` | `/api/contratos/` | ⚙️ **Ejecutivo / Admin** | Supervisión global de la totalidad de contratos emitidos en el sistema. |
-| `PATCH` | `/api/contratos/{id}/estado/` | ⚙️ **Ejecutivo / Admin** | **Transición de Estado:** Al pasar a `COMPLETADO` o `CANCELADO`, **repone automáticamente la flota al inventario disponible**. |
+```mermaid
+sequenceDiagram
+    autonumber
+    actor C as Empresa Constructora
+    participant API as Checkout View (Atomic)
+    participant Lock as PostgreSQL (Row Locking)
+    participant Contrato as Modelo Contrato (3FN)
+    participant Flota as Inventario Maquinaria
+    actor E as Ejecutivo Arriendos
+
+    C->>API: POST /api/contratos-arriendo/checkout/ (Confirmar y Pagar)
+    Note over API,Lock: Inicia transaction.atomic()
+    API->>Lock: SELECT ... FOR UPDATE (Bloqueo pesimista de filas)
+    Lock-->>API: Filas bloqueadas exclusivamente
+    API->>Flota: Valida flota_disponible >= cantidad
+    alt Stock Insuficiente
+        API-->>C: 400 Bad Request: Flota agotada por concurrencia (Rollback)
+    else Stock Disponible
+        API->>Flota: Descuenta flota_disponible (flota -= cantidad)
+        API->>Contrato: Crea Contrato estado PAGADO + Snapshots Detalle
+        API->>C: 201 Created: Contrato emitido y flota asegurada (Commit)
+    end
+    Note over Contrato,Flota: Fin de la transacción atómica
+
+    E->>API: POST /api/contratos-arriendo/{id}/transicionar/ (COMPLETADO)
+    API->>Flota: Reposición automática de stock (flota += cantidad)
+    API-->>E: 200 OK: Maquinaria reincorporada al catálogo
+```
 
 ---
 
-## 🚀 Guía de Puesta en Marcha Rápida (Quickstart)
+## 🚀 Guía de Instalación y Ejecución Local (Para el Profesor)
 
-### 1. Clonar el Repositorio
+### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/sebatmail/Arriendo-maquinaria-drf-postgresql.git
 cd Arriendo-maquinaria-drf-postgresql
 ```
 
-### 2. Instalar Dependencias
+### 2. Crear entorno virtual e instalar dependencias
 ```bash
+python -m venv venv
+# En Windows:
+venv\Scripts\activate
+# En Linux/macOS:
+source venv/bin/activate
+
 pip install -r requirements.txt
-# o instalar directamente:
-pip install django djangorestframework djangorestframework-simplejwt drf-spectacular django-filter psycopg2-binary reportlab
 ```
 
-### 3. Migrar Base de Datos y Poblar Datos Iniciales
+### 3. Configurar variables de entorno
+Copia el archivo de ejemplo `.env.example` a `.env`:
+```bash
+cp .env.example .env
+```
+*(Si no tienes PostgreSQL instalado, el sistema activa automáticamente SQLite con `USE_SQLITE_FALLBACK=True` en `.env`)*.
+
+### 4. Ejecutar migraciones y sembrar datos de prueba
 ```bash
 python manage.py migrate
 python manage.py seed_data
 ```
 
-### 4. Ejecutar Suite de Pruebas Automatizadas
+### 5. Ejecutar suite de pruebas unitarias y de integración
 ```bash
-python manage.py test
+python manage.py test renting
 ```
+> **Resultado esperado:** 6 de 6 pruebas automatizadas aprobadas al 100% `[OK]`.
 
-### 5. Iniciar Servidor de Desarrollo
+### 6. Iniciar servidor de desarrollo
 ```bash
 python manage.py runserver
 ```
+Abre en tu navegador: **`http://127.0.0.1:8000/`**
 
 ---
 
-## 🔑 Credenciales de Prueba Preconfiguradas
+## 🔑 Credenciales de Acceso para Pruebas
 
-<table align="center" width="100%">
-  <thead>
-    <tr bgcolor="#1e293b">
-      <th>Rol de Usuario</th>
-      <th>Usuario</th>
-      <th>Contraseña</th>
-      <th>Permisos y Accesos Habilitados</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>⚙️ Ejecutivo de Arriendos (Admin)</b></td>
-      <td><code>admin_ejecutivo</code></td>
-      <td><code>admin1234</code></td>
-      <td>CRUD Maquinarias, Gestión de Contratos, Swagger Docs Solo Admin, Django Admin</td>
-    </tr>
-    <tr>
-      <td><b>🏗️ Empresa Constructora (Cliente)</b></td>
-      <td><code>constructora_demo</code></td>
-      <td><code>demo1234</code></td>
-      <td>Carro Persistente, Cotizador de Fechas, Checkout Atómico, Mis Contratos</td>
-    </tr>
-  </tbody>
-</table>
+| Rol de Usuario | Nombre de Usuario | Contraseña | Permisos y Capacidades |
+| :--- | :--- | :--- | :--- |
+| **👑 Ejecutivo / Admin** | `admin_ejecutivo` | `admin1234` | CRUD Maquinarias, transición de estados de contratos, Swagger Header Admin. |
+| **🏗️ Constructora Demo** | `constructora_demo` | `demo1234` | Catálogo en tiempo real, carro persistente, checkout transaccional y mis contratos. |
+| **🏢 Constructora Andes** | `constructora_andes` | `demo1234` | Cuenta secundaria para pruebas de concurrencia y múltiples clientes. |
 
 ---
 
-## 📄 Documentos de Entrega Incluidos en el Repositorio
-
-1. 📑 **`DEFENSA_ORAL_Y_PREGUNTAS_EXAMEN_EVA2.pdf`**: Documento ejecutivo generado con ReportLab que contiene el banco completo de preguntas y respuestas técnicas de nivel Senior para obtener el 100% en la defensa oral (70% de la nota).
-2. 📝 **`Sebastian.Torres.backend.AP-N4-C1.txt`**: Archivo formal de entrega con el desglose de módulos y enlace al repositorio para el Docente Marcelo Patricio Alvarado Aravena.
-3. ⚡ **`Abrir_PostgreSQL_Consola.bat`**: Script de acceso directo para interactuar con la base de datos `arriendo_maquinaria_db` en PostgreSQL 12.
+## 🌐 SaaS en Producción en la Web
+El sistema completo se encuentra operando de forma continua en producción:
+- 🔗 **Plataforma Web SaaS:** [https://proyecto-backend.momentumspace.cl/](https://proyecto-backend.momentumspace.cl/)
+- 📑 **Consola Swagger OpenAPI:** [https://proyecto-backend.momentumspace.cl/api/docs/](https://proyecto-backend.momentumspace.cl/api/docs/)
+- 📬 **Contacto de Soporte:** storres@momentumspace.cl
 
 ---
 
 <div align="center">
-  <sub>Desarrollo Backend • EVA-2 • Duoc UC 2026 • Sebastián Torres Zamorano • Docente: Marcelo Patricio Alvarado Aravena</sub>
+  <b>Desarrollado por Sebastián Torres Zamorano • Evaluación Oficial EVA-2 Backend 2026</b>
 </div>
