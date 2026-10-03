@@ -1,0 +1,101 @@
+================================================================================
+EVALUACIÓN EVA-2: DESARROLLO BACKEND (25% PONDERACIÓN)
+PROYECTO 6: SISTEMA DE ARRIENDO DE MAQUINARIA DE CONSTRUCCIÓN (RENTING / SERVICIOS)
+================================================================================
+
+DATOS DE IDENTIFICACIÓN:
+--------------------------------------------------------------------------------
+• Estudiante:  Sebastián Torres Zamorano
+• Docente:     Marcelo Patricio Alvarado Aravena
+• Asignatura:  Desarrollo Backend
+• Sección:     AP-N4-C1
+• Año:         2026
+• Repositorio: https://github.com/sebatmail/Arriendo-maquinaria-drf-postgresql.git
+
+
+ESTIMADO PROFESOR MARCELO PATRICIO ALVARADO:
+--------------------------------------------------------------------------------
+A continuación, presento la entrega formal del desarrollo backend correspondiente
+a la Evaluación EVA-2. La solución ha sido construida bajo estándares de calidad
+Senior Enterprise, cumpliendo estrictamente con los requerimientos de la pauta,
+las directrices dadas en clases (CRUD templates, Swagger exclusivo para Admin con
+Header Admin, y normalización estricta en 3FN), e integrando PostgreSQL nativo.
+
+
+ARQUITECTURA Y DESGLOSE DE MÓDULOS DEL SISTEMA:
+--------------------------------------------------------------------------------
+
+1. MÓDULO DE AUTENTICACIÓN Y ROLES RBAC (authentication/):
+   • Modelo de Usuario Personalizado (Usuario): Extiende AbstractUser integrando
+     el campo 'rol' con TextChoices explícitos ('EMPRESA_CONSTRUCTORA' vs 
+     'EJECUTIVO_ARRIENDOS'), además de atributos B2B (RUT Empresa, Razón Social, 
+     Dirección de Obra).
+   • JWT con Claims Personalizados: La clase CustomTokenObtainPairSerializer 
+     inyecta en el payload del Access Token el rol, user_id, razón social y nombre 
+     completo, permitiendo autorización descentralizada y stateless.
+   • Clases de Permisos Personalizadas: IsEmpresaConstructora, IsEjecutivoArriendos, 
+     IsAdminOrReadOnly e IsDocAdminUser.
+
+2. MÓDULO DE DOMINIO Y LÓGICA DE RENTING (renting/):
+   • Normalización en Tercera Forma Normal (3FN): 
+     - CategoriaEquipo: Clasificación técnica (Excavadoras, Generadores, Andamios, Hormigoneras).
+     - Maquinaria: Catálogo de flota con tarifas diarias, garantías fijas y control 
+       de unidades totales vs disponibles.
+     - CarroArriendo & ItemCarroArriendo: Persistencia 1 a 1 en PostgreSQL por usuario.
+       Los equipos agregados no se pierden al cerrar sesión (Post-Logout).
+     - ContratoArriendo & DetalleContratoArriendo: Snapshot histórico inmutable.
+       Congela tarifas, garantías y períodos en el instante de la transacción,
+       eliminando dependencias transitivas si el catálogo cambia de precio en el futuro.
+     - HistorialTransicionContrato: Registro de auditoría y trazabilidad de estados.
+   • Control Transaccional y Concurrencia Atómica (ACID):
+     - El stock NO se descuenta al agregar al carro (evitando ataques de bloqueo malicioso).
+     - En el Checkout (POST /api/contratos/checkout/), se ejecuta un bloque atómico 
+       con bloqueo de filas (select_for_update() en PostgreSQL), validando que las 
+       unidades solicitadas estén libres, descontando la flota disponible y emitiendo 
+       el contrato en estado PAGADO.
+     - Al transicionar el contrato a COMPLETADO (devolución del equipo) o CANCELADO, 
+       el sistema reincorpora automáticamente las unidades a la flota disponible.
+
+3. MÓDULO DE FILTRADO DECLARATIVO (django-filter):
+   • Implementado mediante MaquinariaFilter en /api/maquinarias/, permitiendo 
+     búsqueda compuesta por categoría (id/slug), rangos de tarifa diaria (min/max), 
+     monto máximo de garantía, disponibilidad real de flota y búsqueda textual 'q'.
+
+4. MÓDULO DE DOCUMENTACIÓN OPENAPI / SWAGGER (drf-spectacular):
+   • Especificación OpenAPI 3.0 operativa en /api/docs/ y /api/schema/.
+   • Cumplimiento del requerimiento de clase: Acceso restringido en /documentacion/ 
+     con el banner y validación exclusiva "Header Solo Admin".
+
+5. MÓDULO DE INTERFAZ WEB Y CRUD TEMPLATES (web_ui/ + templates/):
+   • Base Template con Footer Institucional inyectado vía Context Processor con los 
+     datos obligatorios del Estudiante, Docente, Sección y Año.
+   • Catálogo público interactivo con cotizador dinámico de días y garantías en tiempo real.
+   • Carro de Arriendo persistente con checkout transaccional.
+   • Portal de Mis Contratos para empresas constructoras.
+   • Panel Administrativo CRUD de Maquinarias y Consola de Transición de Contratos 
+     para el Ejecutivo de Arriendos.
+
+
+GUÍA DE PUESTA EN MARCHA RÁPIDA:
+--------------------------------------------------------------------------------
+1. Aplicar migraciones en PostgreSQL:
+   python manage.py migrate
+
+2. Poblar datos de prueba (categorías, maquinarias y contratos):
+   python manage.py seed_data
+
+3. Ejecutar suite de pruebas unitarias automatizadas (100% OK):
+   python manage.py test
+
+4. Iniciar servidor de desarrollo:
+   python manage.py runserver
+
+5. Cuentas de Acceso Preconfiguradas:
+   • Administrador / Ejecutivo: admin_ejecutivo  |  admin1234
+   • Empresa Constructora (Cliente): constructora_demo  |  demo1234
+
+
+ENLACE AL REPOSITORIO GITHUB:
+--------------------------------------------------------------------------------
+https://github.com/sebatmail/Arriendo-maquinaria-drf-postgresql.git
+================================================================================
