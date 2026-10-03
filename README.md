@@ -2,7 +2,7 @@
 
 # 🚜 RENT-EQUIP PRO | Enterprise Industrial SaaS
 ### **Plataforma de Arriendo de Maquinaria Pesada en 3FN con Django REST Framework & PostgreSQL**
-**Evaluación Backend EVA-2 (25% Ponderación Total • Puntaje: 100/100 • Nota 7.0)**
+**Evaluación Backend EVA-2 (25% Ponderación Total)**
 
 ---
 
@@ -42,7 +42,7 @@
     <td><b>🏗️ Proyecto Asignado:</b> N°6 Arriendo de Maquinaria de Construcción</td>
   </tr>
   <tr>
-    <td><b>🎯 Ponderación:</b> 25% (70% Defensa Oral • 30% Desarrollo Técnico)</td>
+    <td><b>🎯 Ponderación:</b> 25% </td>
     <td><b>🌐 SaaS Operando en Producción:</b> <a href="https://proyecto-backend.momentumspace.cl/">proyecto-backend.momentumspace.cl</a></td>
   </tr>
 </table>
