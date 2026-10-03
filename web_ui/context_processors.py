@@ -15,10 +15,11 @@ def enterprise_footer_info(request):
     return {
         'plataforma_info': getattr(settings, 'PLATAFORMA_INFO', {
             'NOMBRE_PLATAFORMA': 'RENT-EQUIP PRO',
-            'ORGANIZACION': 'Momentum Space Cloud Solutions',
+            'ORGANIZACION': 'Momentum Space',
+            'SITIO_WEB': 'https://momentumspace.cl',
             'DOMINIO': 'proyecto-backend.momentumspace.cl',
             'VERSION': 'v2.4.0 Enterprise',
             'ANO': '2026',
-            'CONTACTO_SOPORTE': 'soporte@momentumspace.cl',
+            'CONTACTO_SOPORTE': 'storres@momentumspace.cl',
         })
     }

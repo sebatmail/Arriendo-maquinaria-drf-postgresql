@@ -190,6 +190,9 @@ SIMPLE_JWT = {
     'TOKEN_OBTAIN_SERIALIZER': 'authentication.serializers.CustomTokenObtainPairSerializer',
 }
 
+# Permitir incrustar documentación en iframes del mismo origen
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 # ==============================================================================
 # CONFIGURACIÓN DE DOCUMENTACIÓN OPENAPI / SWAGGER
 # ==============================================================================
@@ -203,6 +206,9 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '2.4.0 Enterprise',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_DIST': '//unpkg.com/swagger-ui-dist@5.11.0',
+    'SWAGGER_UI_FAVICON_HREF': '//unpkg.com/swagger-ui-dist@5.11.0/favicon-32x32.png',
+    'REDOC_DIST': '//cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js',
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'persistAuthorization': True,
@@ -215,9 +221,10 @@ SPECTACULAR_SETTINGS = {
 # ==============================================================================
 PLATAFORMA_INFO = {
     'NOMBRE_PLATAFORMA': 'RENT-EQUIP PRO',
-    'ORGANIZACION': 'Momentum Space Cloud Solutions',
+    'ORGANIZACION': 'Momentum Space',
+    'SITIO_WEB': 'https://momentumspace.cl',
     'DOMINIO': 'proyecto-backend.momentumspace.cl',
     'VERSION': 'v2.4.0 Enterprise',
     'ANO': '2026',
-    'CONTACTO_SOPORTE': 'soporte@momentumspace.cl',
+    'CONTACTO_SOPORTE': 'storres@momentumspace.cl',
 }

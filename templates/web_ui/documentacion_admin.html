@@ -1,22 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Documentación Swagger OpenAPI (Solo Admin) | RENT-EQUIP PRO{% endblock %}
+{% block title %}Consola OpenAPI Swagger 3.0 (Admin) | RENT-EQUIP PRO{% endblock %}
 
 {% block content %}
 <div class="space-y-6 max-w-7xl mx-auto">
 
-    <!-- REQUERIMIENTO PIZARRA: HEADER EXCLUSIVO ADMIN PARA DOCUMENTACIÓN -->
+    <!-- HEADER EXCLUSIVO ADMIN PARA DOCUMENTACIÓN -->
     <div class="p-6 rounded-3xl bg-gradient-to-r from-purple-950 via-slate-900 to-amber-950 border border-amber-500/50 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="space-y-1">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black uppercase tracking-wider">
                 <i class="fa-solid fa-shield-halved"></i> Acceso Restringido: Header Solo Admin
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Consola de Documentación OpenAPI / Swagger 3.0</h1>
-            <p class="text-xs sm:text-sm text-slate-300">Especificación de esquemas, endpoints DRF, claims JWT y transacciones atómicas.</p>
+            <p class="text-xs sm:text-sm text-slate-300">Especificación de esquemas, endpoints DRF, claims JWT y transacciones atómicas de arriendo.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-2.5">
             <a href="/api/docs/" target="_blank" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition inline-flex items-center gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Swagger Nativo
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Swagger Pantalla Completa
+            </a>
+            <a href="/api/redoc/" target="_blank" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition inline-flex items-center gap-2">
+                <i class="fa-solid fa-book"></i> ReDoc
             </a>
             <a href="/api/schema/" target="_blank" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition inline-flex items-center gap-2">
                 <i class="fa-solid fa-code"></i> JSON Schema
@@ -24,9 +27,18 @@
         </div>
     </div>
 
-    <!-- Embedded Swagger UI Frame -->
-    <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl bg-white min-h-[800px]">
-        <iframe src="/api/docs/" class="w-full h-[850px] border-none" title="Swagger UI Embedded"></iframe>
+    <!-- Embedded Swagger UI Container -->
+    <div class="glass-panel rounded-3xl border border-slate-800 p-4 sm:p-6 shadow-2xl bg-slate-950/80">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+            <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Endpoint Activo: <code class="text-amber-400">/api/schema/</code> (OpenAPI 3.0.3)
+            </span>
+            <button onclick="document.getElementById('swaggerFrame').src='/api/docs/';" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
+                <i class="fa-solid fa-rotate-right"></i> Recargar Consola
+            </button>
+        </div>
+        <iframe id="swaggerFrame" src="/api/docs/" class="w-full h-[800px] rounded-2xl border border-slate-800 bg-white" title="Swagger UI Embedded"></iframe>
     </div>
 
 </div>
