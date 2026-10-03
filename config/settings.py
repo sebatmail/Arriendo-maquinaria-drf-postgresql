@@ -207,7 +207,8 @@ SPECTACULAR_SETTINGS = {
 # ==============================================================================
 ALUMNO_INFO = {
     'NOMBRE_COMPLETO': config('ALUMNO_NOMBRE', default='Sebastián Torres Zamorano'),
-    'SECCION': config('ALUMNO_SECCION', default='Backend DLY01'),
+    'PROFESOR': config('PROFESOR_NOMBRE', default='Marcelo Patricio Alvarado Aravena'),
+    'SECCION': config('ALUMNO_SECCION', default='AP-N4-C1'),
     'ANO': config('ALUMNO_ANO', default='2026'),
     'PROYECTO': 'Proyecto 6: Arriendo de Maquinaria de Construcción (Renting / Servicios)',
     'ASIGNATURA': 'Desarrollo Backend (EVA-2)',

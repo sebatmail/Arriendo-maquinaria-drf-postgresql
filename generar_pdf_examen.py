@@ -47,7 +47,7 @@ class NumberedCanvas(canvas.Canvas):
         self.setLineWidth(0.5)
         self.line(54, 45, 612 - 54, 45)
         
-        footer_text = "Estudiante: Sebastián Torres Zamorano | Sección: Backend DLY01 | Año: 2026 | Arquitectura 3FN + DRF + PostgreSQL"
+        footer_text = "Estudiante: Sebastián Torres Zamorano | Docente: Marcelo Patricio Alvarado Aravena | Sección: AP-N4-C1 | Año: 2026"
         self.drawString(54, 32, footer_text)
         self.drawRightString(612 - 54, 32, f"Página {self._pageNumber} de {page_count}")
         self.restoreState()
@@ -171,9 +171,10 @@ def generar_pdf(filename="DEFENSA_ORAL_Y_PREGUNTAS_EXAMEN_EVA2.pdf"):
 
     # Ficha Técnica Table
     ficha_data = [
-        [Paragraph("<b>Estudiante:</b>", answer_style), Paragraph("Sebastián Torres Zamorano", answer_style), Paragraph("<b>Asignatura:</b>", answer_style), Paragraph("Desarrollo Backend (EVA-2)", answer_style)],
-        [Paragraph("<b>Sección:</b>", answer_style), Paragraph("Backend DLY01", answer_style), Paragraph("<b>Ponderación:</b>", answer_style), Paragraph("25% Total (70% Defensa Oral)", answer_style)],
-        [Paragraph("<b>Motor DB:</b>", answer_style), Paragraph("PostgreSQL (3FN Relacional)", answer_style), Paragraph("<b>Seguridad:</b>", answer_style), Paragraph("JWT Claims RBAC + ACID Trans.", answer_style)],
+        [Paragraph("<b>Estudiante:</b>", answer_style), Paragraph("Sebastián Torres Zamorano", answer_style), Paragraph("<b>Docente:</b>", answer_style), Paragraph("Marcelo Patricio Alvarado Aravena", answer_style)],
+        [Paragraph("<b>Sección:</b>", answer_style), Paragraph("AP-N4-C1", answer_style), Paragraph("<b>Ponderación:</b>", answer_style), Paragraph("25% Total (70% Defensa Oral)", answer_style)],
+        [Paragraph("<b>Asignatura:</b>", answer_style), Paragraph("Desarrollo Backend (EVA-2)", answer_style), Paragraph("<b>Proyecto:</b>", answer_style), Paragraph("N°6 Arriendo Maquinaria (3FN)", answer_style)],
+        [Paragraph("<b>Motor DB:</b>", answer_style), Paragraph("PostgreSQL 12 (Nativo)", answer_style), Paragraph("<b>Seguridad:</b>", answer_style), Paragraph("JWT Claims RBAC + ACID Trans.", answer_style)],
     ]
     t_ficha = Table(ficha_data, colWidths=[75, 175, 80, 174])
     t_ficha.setStyle(TableStyle([
@@ -331,7 +332,7 @@ def generar_pdf(filename="DEFENSA_ORAL_Y_PREGUNTAS_EXAMEN_EVA2.pdf"):
     story.append(Paragraph("P6.1: ¿Cómo se asegura la renderización global del Footer con datos del estudiante?", question_style))
     story.append(Paragraph(
         "<b>Respuesta Senior:</b> Se creó un <b>Context Processor personalizado</b> en <code>web_ui/context_processors.py</code> llamado <code>evaluacion_footer_info</code>, registrado en <code>settings.py</code> dentro de <code>TEMPLATES['OPTIONS']['context_processors']</code>.<br/>"
-        "Esto inyecta automáticamente el diccionario <code>alumno_info</code> (Nombre: <b>Sebastián Torres Zamorano</b>, Sección: <b>Backend DLY01</b>, Año: <b>2026</b>) en todas las vistas HTML del sistema sin ensuciar la lógica de los controladores.",
+        "Esto inyecta automáticamente el diccionario <code>alumno_info</code> (Nombre: <b>Sebastián Torres Zamorano</b>, Docente: <b>Marcelo Patricio Alvarado Aravena</b>, Sección: <b>AP-N4-C1</b>, Año: <b>2026</b>) en todas las vistas HTML del sistema sin ensuciar la lógica de los controladores.",
         answer_style
     ))
 

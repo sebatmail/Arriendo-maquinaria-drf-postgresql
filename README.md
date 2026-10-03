@@ -6,9 +6,10 @@
 
 ## 👨‍💻 Ficha Técnica de Autoría y Evaluación
 - **Estudiante:** Sebastián Torres Zamorano
-- **Sección:** Backend DLY01
+- **Docente:** Marcelo Patricio Alvarado Aravena
+- **Sección:** AP-N4-C1
 - **Año Académico:** 2026
-- **Asignatura:** Desarrollo Backend
+- **Asignatura:** Desarrollo Backend (EVA-2)
 - **Estándar de Desarrollo:** Enterprise Top 1% Industry Standard (DRF + JWT + 3FN + PostgreSQL)
 
 ---
