@@ -87,13 +87,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ==============================================================================
-# CONFIGURACIÓN DE BASE DE DATOS (PRODUCCIÓN CPANEL / LOCAL)
+# CONFIGURACIÓN DE BASE DE DATOS (PRODUCCIÓN / LOCAL)
 # ==============================================================================
 DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
-DB_NAME = config('DB_NAME', default='altoplagas_Proyecto_Backend')
-DB_USER = config('DB_USER', default='Proyecto_Backend1')
-DB_PASSWORD = config('DB_PASSWORD', default='Proyecto_Backend333*')
-DB_HOST = config('DB_HOST', default='localhost')
+DB_NAME = config('DB_NAME', default='arriendo_maquinaria_db')
+DB_USER = config('DB_USER', default='postgres')
+DB_PASSWORD = config('DB_PASSWORD', default='postgres')
+DB_HOST = config('DB_HOST', default='127.0.0.1')
 DB_PORT = config('DB_PORT', default='5432')
 
 DATABASES = {

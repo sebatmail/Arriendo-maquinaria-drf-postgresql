@@ -116,7 +116,7 @@ class Command(BaseCommand):
                 'flota_total': 6,
                 'flota_disponible': 4,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/cat_320_excavator.jpg'
             },
             {
                 'categoria': cat_pesada,
@@ -130,7 +130,7 @@ class Command(BaseCommand):
                 'flota_total': 8,
                 'flota_disponible': 6,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/jcb_3cx_backhoe.jpg'
             },
             {
                 'categoria': cat_generacion,
@@ -144,7 +144,7 @@ class Command(BaseCommand):
                 'flota_total': 10,
                 'flota_disponible': 7,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/cummins_generator_150kva.jpg'
             },
             {
                 'categoria': cat_generacion,
@@ -158,7 +158,7 @@ class Command(BaseCommand):
                 'flota_total': 12,
                 'flota_disponible': 9,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/atlas_copco_light_tower.jpg'
             },
             {
                 'categoria': cat_andamios,
@@ -172,7 +172,7 @@ class Command(BaseCommand):
                 'flota_total': 20,
                 'flota_disponible': 15,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/layher_scaffolding.jpg'
             },
             {
                 'categoria': cat_hormigon,
@@ -186,7 +186,7 @@ class Command(BaseCommand):
                 'flota_total': 5,
                 'flota_disponible': 3,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/carmix_concrete_mixer.jpg'
             },
             {
                 'categoria': cat_hormigon,
@@ -200,7 +200,7 @@ class Command(BaseCommand):
                 'flota_total': 7,
                 'flota_disponible': 5,
                 'estado_operativo': EstadoMaquinaria.DISPONIBLE,
-                'imagen_url': 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80'
+                'imagen_url': '/static/images/maquinarias/wacker_neuson_trowel.jpg'
             }
         ]
 

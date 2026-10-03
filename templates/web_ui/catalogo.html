@@ -133,7 +133,9 @@
                     <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition flex flex-col justify-between group shadow-xl">
                         <!-- Machine Image -->
                         <div class="relative h-52 overflow-hidden bg-slate-950">
-                            <img src="{{ maq.imagen_url }}" alt="{{ maq.nombre }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <img src="{{ maq.imagen_url }}" alt="{{ maq.nombre }}" 
+                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80';"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
                             
                             <!-- Badges on Image -->
@@ -254,6 +256,11 @@
                            class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500">
                 </div>
             </div>
+
+            <p class="text-[11px] text-amber-400/90 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl flex items-start gap-2">
+                <i class="fa-solid fa-circle-info text-xs mt-0.5"></i>
+                <span><strong>Norma Industrial (Días Inclusive):</strong> El arriendo computa los días completos de faena. Para 1 día de uso elija la misma fecha de inicio y fin (ej: 10 al 10 = 1 día; del 10 al 11 = 2 días).</span>
+            </p>
 
             <!-- Cantidad de Unidades -->
             <div>
