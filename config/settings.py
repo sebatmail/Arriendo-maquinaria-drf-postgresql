@@ -88,14 +88,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # ==============================================================================
 # CONFIGURACIÓN DE BASE DE DATOS (PRODUCCIÓN CPANEL / LOCAL)
-# Soporta MySQL (phpMyAdmin) y PostgreSQL de forma transparente
 # ==============================================================================
-DB_ENGINE = config('DB_ENGINE', default='django.db.backends.mysql')
+DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
 DB_NAME = config('DB_NAME', default='altoplagas_Proyecto_Backend')
 DB_USER = config('DB_USER', default='Proyecto_Backend1')
 DB_PASSWORD = config('DB_PASSWORD', default='Proyecto_Backend333*')
 DB_HOST = config('DB_HOST', default='localhost')
-DB_PORT = config('DB_PORT', default='3306')
+DB_PORT = config('DB_PORT', default='5432')
 
 DATABASES = {
     'default': {
